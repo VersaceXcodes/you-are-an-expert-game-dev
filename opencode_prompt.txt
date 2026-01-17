@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: basic-shooting
-- **Title**: Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread
+- **ID**: bullet-collision
+- **Title**: Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact
 - **Category**: functional
 
 ## Description
-Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread
+Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Enable player to shoot bullets with left mouse click at 3 shots per second with 
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Left click and verify bullet fires toward mouse cursor
-2. Hold left click and confirm sustained fire at proper rate
-3. Observe slight bullet spread for multiple shots
-4. Check that bullets travel across the arena properly
+1. Shoot bullets at arena walls and verify they disappear
+2. Fire at pillar obstacles and confirm bullets are stopped
+3. Shoot at enemies and check bullets hit and disappear
+4. Verify bullets don't pass through solid objects
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Enable player to shoot bullets with left mouse click at 3 shots per second with 
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread"
+6. **Commit**: Use message "feat(functional): Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact"
 
 ## Important
-- Implement ONLY this specific feature (ID: basic-shooting)
+- Implement ONLY this specific feature (ID: bullet-collision)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
