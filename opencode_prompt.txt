@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: enemy-tank-spawn
-- **Title**: Spawn Tank enemies that move slowly but have high HP and deal significant damage
+- **ID**: enemy-damage-to-player
+- **Title**: Enable enemies to damage player through contact or projectiles, reducing player HP
 - **Category**: functional
 
 ## Description
-Spawn Tank enemies that move slowly but have high HP and deal significant damage
+Enable enemies to damage player through contact or projectiles, reducing player HP
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Spawn Tank enemies that move slowly but have high HP and deal significant damage
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Progress to waves with Tank enemies
-2. Verify Tanks move slower than other enemy types
-3. Confirm Tanks require many hits to defeat
-4. Check that Tank contact damage is higher than other enemies
+1. Allow enemy to touch player character
+2. Verify player HP decreases by appropriate amount
+3. Get hit by enemy projectile and confirm damage
+4. Check that damage is applied only once per contact
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Spawn Tank enemies that move slowly but have high HP and deal significant damage
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Spawn Tank enemies that move slowly but have high HP and deal significant damage"
+6. **Commit**: Use message "feat(functional): Enable enemies to damage player through contact or projectiles, reducing player HP"
 
 ## Important
-- Implement ONLY this specific feature (ID: enemy-tank-spawn)
+- Implement ONLY this specific feature (ID: enemy-damage-to-player)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
