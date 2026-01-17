@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: upgrade-selection-screen
-- **Title**: Show upgrade selection screen between waves with 3 random upgrade cards for player to choose from
-- **Category**: ui
+- **ID**: offensive-upgrades
+- **Title**: Implement offensive upgrades: fire rate, damage, piercing, crits, chain lightning, orbiting blades
+- **Category**: functional
 
 ## Description
-Show upgrade selection screen between waves with 3 random upgrade cards for player to choose from
+Implement offensive upgrades: fire rate, damage, piercing, crits, chain lightning, orbiting blades
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Show upgrade selection screen between waves with 3 random upgrade cards for play
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Complete a wave to trigger upgrade selection
-2. Verify 3 different upgrade options are displayed
-3. Confirm each upgrade shows name and description
-4. Check that upgrades are randomly selected each time
+1. Select fire rate upgrade and verify faster shooting
+2. Choose damage upgrade and confirm higher bullet damage
+3. Test piercing upgrade allows bullets through enemies
+4. Verify crit upgrade occasionally deals double damage
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Show upgrade selection screen between waves with 3 random upgrade cards for play
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(ui): Show upgrade selection screen between waves with 3 random upgrade cards for player to choose from"
+6. **Commit**: Use message "feat(functional): Implement offensive upgrades: fire rate, damage, piercing, crits, chain lightning, orbiting blades"
 
 ## Important
-- Implement ONLY this specific feature (ID: upgrade-selection-screen)
+- Implement ONLY this specific feature (ID: offensive-upgrades)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
