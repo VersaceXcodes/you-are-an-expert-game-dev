@@ -39,6 +39,12 @@ export interface Player extends Entity {
   lastFired: number;
   bulletSpeed: number;
   bulletSpread: number;
+  // Offensive Upgrades
+  piercing: number;
+  critChance: number;
+  critMultiplier: number;
+  hasChainLightning: boolean;
+  hasOrbitingBlades: boolean;
 }
 
 export interface Bullet extends Entity {
@@ -46,6 +52,9 @@ export interface Bullet extends Entity {
   vy: number;
   damage: number;
   isEnemy: boolean;
+  piercing: number;
+  isCrit: boolean;
+  hitEnemies: string[]; // Track IDs of enemies hit to prevent multi-hit on same pass
 }
 
 export interface Enemy extends Entity {

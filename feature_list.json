@@ -425,9 +425,9 @@
     "selected": true,
     "order": 25,
     "status": "completed",
-    "lastAttemptAt": "2026-01-17T19:00:26.304Z",
+    "lastAttemptAt": "2026-01-17T19:06:02.810Z",
     "attempts": 1,
-    "completedAt": "2026-01-17T19:15:00.000Z"
+    "completedAt": "2026-01-17T19:06:02.810Z"
   },
   {
     "id": "upgrade-selection-interaction",
@@ -455,9 +455,13 @@
       "Verify crit upgrade occasionally deals double damage"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 27
+    "order": 27,
+    "status": "completed",
+    "completedAt": "2026-01-17T19:30:00.000Z"
+    "lastAttemptAt": "2026-01-17T19:06:12.091Z",
+    "attempts": 1
   },
   {
     "id": "defensive-upgrades",

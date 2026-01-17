@@ -47,6 +47,7 @@ export class GameLogic {
   // Wave Management
   currentWave: number = 0;
   waveTimer: number = 0;
+  totalTime: number = 0;
   
   constructor() {
     this.reset();
@@ -77,7 +78,12 @@ export class GameLogic {
       fireRate: 3,
       lastFired: 0,
       bulletSpeed: 600,
-      bulletSpread: 0.1 // Radians
+      bulletSpread: 0.1, // Radians
+      piercing: 0,
+      critChance: 0,
+      critMultiplier: 2.0,
+      hasChainLightning: false,
+      hasOrbitingBlades: false
     };
 
     this.bullets = [];
@@ -86,6 +92,7 @@ export class GameLogic {
     
     this.currentWave = 1;
     this.waveTimer = 0;
+    this.totalTime = 0;
     
     this.spawnWave();
   }
@@ -217,6 +224,36 @@ export class GameLogic {
   update(dt: number, input: InputManager, mouseX: number, mouseY: number) {
     if (this.state !== 'RUN') return;
     if (!this.player) return;
+
+    this.totalTime += dt;
+
+    // Orbiting Blades Logic
+    if (this.player.hasOrbitingBlades) {
+      const bladeCount = 2;
+      const orbitRadius = 60;
+      const rotationSpeed = 3; // Radians per second
+      
+      for (let i = 0; i < bladeCount; i++) {
+        const angle = this.totalTime * rotationSpeed + (i * (Math.PI * 2 / bladeCount));
+        const bladeX = this.player.x + Math.cos(angle) * orbitRadius;
+        const bladeY = this.player.y + Math.sin(angle) * orbitRadius;
+        
+        // Check collision with enemies
+        for (const enemy of this.enemies) {
+          const dx = enemy.x - bladeX;
+          const dy = enemy.y - bladeY;
+          // Simple circle collision check (blade radius approx 10)
+          if (dx * dx + dy * dy < (enemy.width / 2 + 10) ** 2) {
+             // Damage every frame is too much, so maybe low damage or debounce?
+             // For simplicity, let's just do high damage but rely on enemy invulnerability or just melt them
+             // Standard way is DPS. Let's apply small damage per frame.
+             enemy.hp -= this.player.damage * 4 * dt; // 4x DPS of base damage
+             enemy.hitTimer = 0.1;
+             if (enemy.hp <= 0) enemy.markedForDeletion = true;
+          }
+        }
+      }
+    }
 
     // Feature 7: Aiming
     const dx = mouseX - this.player.x;
@@ -439,17 +476,31 @@ export class GameLogic {
           }
         } else {
           // Player bullet vs Enemies
-          // console.log('Checking collision for bullet', b.id, 'vs', this.enemies.length, 'enemies');
           for (const enemy of this.enemies) {
             if (this.checkCollision(b, enemy)) {
-              // console.log('Collision detected!');
+              // specific check to avoid hitting same enemy multiple times with piercing
+              if (b.hitEnemies.includes(enemy.id)) continue;
+
               enemy.hp -= b.damage;
               enemy.hitTimer = 0.1; // Flash for 100ms
-              b.markedForDeletion = true;
+              b.hitEnemies.push(enemy.id);
+
+              // Chain Lightning Logic
+              if (this.player && this.player.hasChainLightning) {
+                 this.triggerChainLightning(enemy, b.damage * 0.5);
+              }
+
+              if (b.piercing > 0) {
+                b.piercing--;
+              } else {
+                b.markedForDeletion = true;
+              }
+              
               if (enemy.hp <= 0) {
                 enemy.markedForDeletion = true;
               }
-              break;
+              
+              if (b.markedForDeletion) break;
             }
           }
         }
@@ -476,18 +527,24 @@ export class GameLogic {
     const vx = Math.cos(angle) * this.player.bulletSpeed;
     const vy = Math.sin(angle) * this.player.bulletSpeed;
 
+    const isCrit = Math.random() < this.player.critChance;
+    const damage = isCrit ? this.player.damage * this.player.critMultiplier : this.player.damage;
+
     this.bullets.push({
       id: Math.random().toString(),
       x: this.player.x,
       y: this.player.y,
-      width: 8,
-      height: 8,
-      color: '#ffff00',
+      width: isCrit ? 12 : 8,
+      height: isCrit ? 12 : 8,
+      color: isCrit ? '#ff00ff' : '#ffff00',
       vx,
       vy,
-      damage: this.player.damage,
+      damage,
       markedForDeletion: false,
-      isEnemy: false
+      isEnemy: false,
+      piercing: this.player.piercing,
+      isCrit,
+      hitEnemies: []
     });
   }
 
@@ -514,8 +571,41 @@ export class GameLogic {
       vy,
       damage: enemy.damage,
       markedForDeletion: false,
-      isEnemy: true
+      isEnemy: true,
+      piercing: 0,
+      isCrit: false,
+      hitEnemies: []
     });
+  }
+
+  triggerChainLightning(target: Enemy, damage: number) {
+    // Find nearest enemy to target that isn't the target itself
+    let nearest: Enemy | null = null;
+    let minDist = 300; // Chain range
+
+    for (const other of this.enemies) {
+      if (other === target) continue;
+      
+      const dx = target.x - other.x;
+      const dy = target.y - other.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = other;
+      }
+    }
+
+    if (nearest) {
+      nearest.hp -= damage;
+      nearest.hitTimer = 0.1;
+      if (nearest.hp <= 0) nearest.markedForDeletion = true;
+      
+      // Visual effect for chain lightning (using a temporary bullet for now or drawing it)
+      // For now, we can add a visual-only bullet that disappears instantly or handle it in draw
+      // Since we don't have a "particles" system yet, we'll just deal damage. 
+      // Ideally we should add a visual indication.
+    }
   }
 
   checkCollision(a: Entity, b: Entity): boolean {
@@ -582,6 +672,25 @@ export class GameLogic {
     // Feature 5/7: Draw Player and Aim
     if (this.player) {
       ctx.save();
+      
+      // Draw Orbiting Blades
+      if (this.player.hasOrbitingBlades) {
+        const bladeCount = 2;
+        const orbitRadius = 60;
+        const rotationSpeed = 3;
+        
+        for (let i = 0; i < bladeCount; i++) {
+          const angle = this.totalTime * rotationSpeed + (i * (Math.PI * 2 / bladeCount));
+          const bladeX = this.player.x + Math.cos(angle) * orbitRadius;
+          const bladeY = this.player.y + Math.sin(angle) * orbitRadius;
+          
+          ctx.fillStyle = '#00ffff';
+          ctx.beginPath();
+          ctx.arc(bladeX, bladeY, 8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
       ctx.translate(this.player.x, this.player.y);
       ctx.rotate(this.player.aimAngle);
       

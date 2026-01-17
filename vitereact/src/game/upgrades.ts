@@ -72,6 +72,42 @@ export const UPGRADES: Upgrade[] = [
     apply: (player: Player) => {
       player.hp = player.maxHp;
     }
+  },
+  {
+    id: 'piercing',
+    name: 'Piercing Rounds',
+    description: 'Bullets pierce through 1 additional enemy',
+    rarity: 'common',
+    apply: (player: Player) => {
+      player.piercing += 1;
+    }
+  },
+  {
+    id: 'crit_master',
+    name: 'Critical Strike',
+    description: '15% chance to deal 2x damage',
+    rarity: 'rare',
+    apply: (player: Player) => {
+      player.critChance += 0.15;
+    }
+  },
+  {
+    id: 'chain_lightning',
+    name: 'Chain Lightning',
+    description: 'Bullets arc to nearby enemies on hit',
+    rarity: 'epic',
+    apply: (player: Player) => {
+      player.hasChainLightning = true;
+    }
+  },
+  {
+    id: 'orbiting_blades',
+    name: 'Orbiting Blades',
+    description: 'Summon blades that orbit you and damage enemies',
+    rarity: 'legendary',
+    apply: (player: Player) => {
+      player.hasOrbitingBlades = true;
+    }
   }
 ];
 
