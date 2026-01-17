@@ -112,7 +112,9 @@
     "passes": true,
     "selected": true,
     "order": 7,
-    "status": "completed"
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T16:43:29.169Z",
+    "completedAt": "2026-01-17T16:43:29.169Z"
   },
   {
     "id": "player-movement-arrows",
@@ -140,9 +142,12 @@
       "Test that aiming updates in real-time with mouse movement"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 9
+    "order": 9,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T16:43:39.305Z",
+    "attempts": 1
   },
   {
     "id": "basic-shooting",

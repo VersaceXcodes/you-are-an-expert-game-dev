@@ -52,8 +52,11 @@ const Game: React.FC = () => {
       // But we need to handle "Start" button click.
       
       const rect = canvas.getBoundingClientRect();
-      const mouseX = input.mouse.x - rect.left;
-      const mouseY = input.mouse.y - rect.top;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      const mouseX = (input.mouse.x - rect.left) * scaleX;
+      const mouseY = (input.mouse.y - rect.top) * scaleY;
 
       // Update
       game.update(dt, input, mouseX, mouseY);
