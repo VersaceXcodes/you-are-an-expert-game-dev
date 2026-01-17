@@ -183,9 +183,10 @@
     "passes": true,
     "selected": true,
     "order": 11,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T16:57:52.856Z",
-    "attempts": 1
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T17:04:32.414Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T17:04:32.414Z"
   },
   {
     "id": "dash-ability",
@@ -198,9 +199,12 @@
       "Test that dash doesn't work while on cooldown"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 12
+    "order": 12,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T17:04:42.429Z",
+    "attempts": 1
   },
   {
     "id": "dash-visual-feedback",

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, PLAYER_DASH_COOLDOWN } from './constants';
 import { GameState } from './types';
 import { GameLogic } from './GameLogic';
 import { InputManager } from './InputManager';
@@ -13,6 +13,7 @@ const Game: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>('MENU');
   const [playerHp, setPlayerHp] = useState(100);
   const [playerMaxHp, setPlayerMaxHp] = useState(100);
+  const [dashCooldown, setDashCooldown] = useState(0);
   
   // Use refs to keep persistent game objects
   const gameLogicRef = useRef<GameLogic | null>(null);
@@ -21,6 +22,7 @@ const Game: React.FC = () => {
   // Refs to track last synced values to avoid excessive re-renders
   const lastHpRef = useRef(100);
   const lastMaxHpRef = useRef(100);
+  const lastDashRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -73,12 +75,19 @@ const Game: React.FC = () => {
       if (game.player) {
         const currentHp = Math.ceil(game.player.hp);
         const currentMaxHp = game.player.maxHp;
+        const currentDash = Math.max(0, game.player.dashCooldown);
         
         if (currentHp !== lastHpRef.current || currentMaxHp !== lastMaxHpRef.current) {
           setPlayerHp(currentHp);
           setPlayerMaxHp(currentMaxHp);
           lastHpRef.current = currentHp;
           lastMaxHpRef.current = currentMaxHp;
+        }
+
+        // Update dash if changed significantly or hit 0
+        if (Math.abs(currentDash - lastDashRef.current) > 0.1 || (currentDash === 0 && lastDashRef.current !== 0)) {
+            setDashCooldown(currentDash);
+            lastDashRef.current = currentDash;
         }
       }
 
@@ -134,7 +143,12 @@ const Game: React.FC = () => {
         )}
 
         {gameState === 'RUN' && (
-          <HUD hp={playerHp} maxHp={playerMaxHp} />
+          <HUD 
+            hp={playerHp} 
+            maxHp={playerMaxHp} 
+            dashCooldown={dashCooldown}
+            maxDashCooldown={PLAYER_DASH_COOLDOWN}
+          />
         )}
 
         {gameState === 'META_MENU' && (

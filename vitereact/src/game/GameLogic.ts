@@ -8,7 +8,10 @@ import {
   ARENA_WIDTH, 
   ARENA_HEIGHT,
   PLAYER_BASE_SPEED,
-  PLAYER_MAX_HP
+  PLAYER_MAX_HP,
+  PLAYER_DASH_SPEED,
+  PLAYER_DASH_DURATION,
+  PLAYER_DASH_COOLDOWN
 } from './constants';
 import { InputManager } from './InputManager';
 
@@ -37,6 +40,9 @@ export class GameLogic {
       vx: 0,
       vy: 0,
       dashCooldown: 0,
+      dashTimer: 0,
+      dashVx: 0,
+      dashVy: 0,
       isInvulnerable: false,
       markedForDeletion: false,
       aimAngle: 0,
@@ -73,24 +79,58 @@ export class GameLogic {
     const dy = mouseY - this.player.y;
     this.player.aimAngle = Math.atan2(dy, dx);
 
-    // Feature 6: Player movement
-    let mx = 0;
-    let my = 0;
-
-    if (input.isKeyDown('KeyW') || input.isKeyDown('ArrowUp')) my -= 1;
-    if (input.isKeyDown('KeyS') || input.isKeyDown('ArrowDown')) my += 1;
-    if (input.isKeyDown('KeyA') || input.isKeyDown('ArrowLeft')) mx -= 1;
-    if (input.isKeyDown('KeyD') || input.isKeyDown('ArrowRight')) mx += 1;
-
-    if (mx !== 0 || my !== 0) {
-      const length = Math.sqrt(mx * mx + my * my);
-      mx /= length;
-      my /= length;
+    // Feature 6: Player movement & Dash
+    if (this.player.dashCooldown > 0) {
+      this.player.dashCooldown -= dt;
     }
 
-    const moveSpeed = this.player.speed * dt;
-    const nextX = this.player.x + mx * moveSpeed;
-    const nextY = this.player.y + my * moveSpeed;
+    let nextX = this.player.x;
+    let nextY = this.player.y;
+
+    if (this.player.dashTimer > 0) {
+      // Dashing state
+      this.player.dashTimer -= dt;
+      nextX += this.player.dashVx * dt;
+      nextY += this.player.dashVy * dt;
+
+      if (this.player.dashTimer <= 0) {
+        this.player.isInvulnerable = false;
+        this.player.dashTimer = 0;
+      }
+    } else {
+      // Normal movement
+      let mx = 0;
+      let my = 0;
+
+      if (input.isKeyDown('KeyW') || input.isKeyDown('ArrowUp')) my -= 1;
+      if (input.isKeyDown('KeyS') || input.isKeyDown('ArrowDown')) my += 1;
+      if (input.isKeyDown('KeyA') || input.isKeyDown('ArrowLeft')) mx -= 1;
+      if (input.isKeyDown('KeyD') || input.isKeyDown('ArrowRight')) mx += 1;
+
+      if (mx !== 0 || my !== 0) {
+        const length = Math.sqrt(mx * mx + my * my);
+        mx /= length;
+        my /= length;
+      }
+
+      // Check for Dash
+      // Only dash if moving (mx/my != 0)
+      if (input.isKeyDown('Space') && this.player.dashCooldown <= 0 && (mx !== 0 || my !== 0)) {
+        this.player.dashTimer = PLAYER_DASH_DURATION;
+        this.player.dashCooldown = PLAYER_DASH_COOLDOWN;
+        this.player.isInvulnerable = true;
+        this.player.dashVx = mx * PLAYER_DASH_SPEED;
+        this.player.dashVy = my * PLAYER_DASH_SPEED;
+        
+        // Initial dash movement
+        nextX += this.player.dashVx * dt;
+        nextY += this.player.dashVy * dt;
+      } else {
+        const moveSpeed = this.player.speed * dt;
+        nextX += mx * moveSpeed;
+        nextY += my * moveSpeed;
+      }
+    }
 
     // Feature 4: Wall collisions (Clamp)
     const clamped = this.clampToArena(this.player, nextX, nextY);
