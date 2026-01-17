@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: player-damage-to-enemies
-- **Title**: Allow player bullets to damage enemies, reducing their HP and eventually destroying them
+- **ID**: wave-system-progression
+- **Title**: Manage wave progression where each wave spawns enemies until all are defeated, then advances to next wave
 - **Category**: functional
 
 ## Description
-Allow player bullets to damage enemies, reducing their HP and eventually destroying them
+Manage wave progression where each wave spawns enemies until all are defeated, then advances to next wave
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Allow player bullets to damage enemies, reducing their HP and eventually destroy
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Shoot bullets at various enemy types
-2. Verify enemies take damage from bullet hits
-3. Confirm enemies are destroyed when HP reaches zero
-4. Check that different enemies have different HP amounts
+1. Complete a wave by killing all enemies
+2. Verify wave advances to next number
+3. Confirm new wave begins with fresh enemy spawns
+4. Check that wave counter updates in UI
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Allow player bullets to damage enemies, reducing their HP and eventually destroy
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Allow player bullets to damage enemies, reducing their HP and eventually destroying them"
+6. **Commit**: Use message "feat(functional): Manage wave progression where each wave spawns enemies until all are defeated, then advances to next wave"
 
 ## Important
-- Implement ONLY this specific feature (ID: player-damage-to-enemies)
+- Implement ONLY this specific feature (ID: wave-system-progression)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
