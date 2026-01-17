@@ -55,12 +55,13 @@
       "Confirm enemies cannot spawn or move outside boundaries"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
     "order": 4,
     "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T16:21:35.349Z",
-    "attempts": 1
+    "lastAttemptAt": "2026-01-17T16:26:27.286Z",
+    "attempts": 2,
+    "errorMessage": "Agent completed but feature not marked as passed"
   },
   {
     "id": "arena-obstacles",

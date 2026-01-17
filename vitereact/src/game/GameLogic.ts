@@ -40,15 +40,8 @@ export class GameLogic {
     this.bullets = [];
     this.enemies = [];
 
-    // Create 4 pillars
-    const pillarSize = 60;
-    const padding = 200;
-    this.obstacles = [
-      { id: 'p1', x: ARENA_X + padding, y: ARENA_Y + padding, width: pillarSize, height: pillarSize, color: '#666', markedForDeletion: false },
-      { id: 'p2', x: ARENA_X + ARENA_WIDTH - padding, y: ARENA_Y + padding, width: pillarSize, height: pillarSize, color: '#666', markedForDeletion: false },
-      { id: 'p3', x: ARENA_X + padding, y: ARENA_Y + ARENA_HEIGHT - padding, width: pillarSize, height: pillarSize, color: '#666', markedForDeletion: false },
-      { id: 'p4', x: ARENA_X + ARENA_WIDTH - padding, y: ARENA_Y + ARENA_HEIGHT - padding, width: pillarSize, height: pillarSize, color: '#666', markedForDeletion: false },
-    ];
+    // Obstacles will be added in a later feature
+    this.obstacles = [];
   }
 
   clampToArena(entity: Entity, nextX: number, nextY: number): { x: number, y: number } {
