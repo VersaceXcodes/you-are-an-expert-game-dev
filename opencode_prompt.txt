@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: dash-ability
-- **Title**: Implement dash ability with Space key providing 0
+- **ID**: enemy-shooter-spawn
+- **Title**: Spawn Shooter enemies that maintain distance and fire slow bullets at the player
 - **Category**: functional
 
 ## Description
-Implement dash ability with Space key providing 0.25s invulnerability and 2.5s cooldown
+Spawn Shooter enemies that maintain distance and fire slow bullets at the player
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Implement dash ability with Space key providing 0.25s invulnerability and 2.5s c
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Press Space and verify player dashes in movement direction
-2. Confirm player is invulnerable during dash duration
-3. Check that dash has 2.5 second cooldown before reuse
-4. Test that dash doesn't work while on cooldown
+1. Reach waves where Shooters appear
+2. Observe Shooters keeping distance from player
+3. Verify Shooters fire bullets toward player position
+4. Confirm Shooter bullets travel at appropriate speed
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Implement dash ability with Space key providing 0.25s invulnerability and 2.5s c
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Implement dash ability with Space key providing 0"
+6. **Commit**: Use message "feat(functional): Spawn Shooter enemies that maintain distance and fire slow bullets at the player"
 
 ## Important
-- Implement ONLY this specific feature (ID: dash-ability)
+- Implement ONLY this specific feature (ID: enemy-shooter-spawn)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
