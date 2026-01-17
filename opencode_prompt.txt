@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: player-character-spawn
-- **Title**: Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)
+- **ID**: player-movement-wasd
+- **Title**: Enable smooth player movement using WASD keys with proper collision detection against walls and obstacles
 - **Category**: functional
 
 ## Description
-Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)
+Enable smooth player movement using WASD keys with proper collision detection against walls and obstacles
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Spawn the player character in the center of the arena with initial stats (100 HP
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Start a new run
-2. Verify player character appears in arena center
-3. Check that HP bar shows 100/100 health
-4. Confirm player is ready to receive input commands
+1. Press W key and verify player moves up
+2. Press A key and verify player moves left
+3. Press S key and verify player moves down
+4. Press D key and verify player moves right
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Spawn the player character in the center of the arena with initial stats (100 HP
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)"
+6. **Commit**: Use message "feat(functional): Enable smooth player movement using WASD keys with proper collision detection against walls and obstacles"
 
 ## Important
-- Implement ONLY this specific feature (ID: player-character-spawn)
+- Implement ONLY this specific feature (ID: player-movement-wasd)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
