@@ -1,0 +1,1034 @@
+You are an AI Software Engineer building a complete application. Your task is to set up the project AND implement all selected features.
+
+## Project Description
+You are an expert game dev + systems designer. Build a complete desktop game MVP called **“One Room Dungeon”** (a one-screen roguelite survival arena). The goal is to produce a playable, polished prototype fast, with clean modular code.
+
+## Tech + Output
+- Desktop game.
+- Use simple shapes/placeholders for art (circles/rectangles) and basic particles.
+- Provide a clear project structure and well-separated modules (game loop, entities, UI, upgrades, waves, saving).
+- Include comments and a short README with how to run + controls.
+
+## Core Game Concept
+The player is trapped in a single arena room. Enemies spawn in waves. After each wave, the game pauses and the player chooses 1 upgrade from 3 random cards. The run continues until the player dies, then show a run summary and allow instant restart.
+
+## Controls
+- WASD / Arrow keys: move
+- Mouse: aim
+- Left click: shoot
+- Space: dash (short invulnerability + cooldown)
+- Esc: pause/unpause
+
+## Required Screens / States
+1) Main Menu: Play, Meta Upgrades, Settings, Quit
+2) In-Run HUD: HP bar, wave number, time survived, coins
+3) Between-Wave Upgrade Selection: show 3 upgrade cards, pick 1 (optional reroll button)
+4) Pause Menu: Resume, Restart, Exit to Menu
+5) Game Over: stats (time survived, wave reached, kills, coins earned), high score, Restart, Menu
+
+Use a clean state machine for these: MENU → RUN → UPGRADE → RUN → GAMEOVER (and PAUSE overlay).
+
+## Arena
+- One rectangular room with walls.
+- Add 4 pillar obstacles (rectangles) that block movement and bullets.
+- Optional: a few breakable crates that can drop small heals or coins.
+
+## Player
+- Stats: HP=100, MoveSpeed=1.0, Dash=0.25s invuln, DashCooldown=2.5s
+- Weapon: basic gun (10 dmg, 3 shots/sec, small spread)
+- Add bullet collision, enemy hit flashes, and knockback or micro-stun (keep it simple).
+- Implement dash trail + cooldown UI indicator.
+
+## Enemies (MVP 3 types)
+1) Chaser: runs straight at player. Low HP, common.
+2) Shooter: tries to keep distance and fires slow bullets at player.
+3) Tank: slow, high HP, hits hard or body-damages on contact.
+
+Enemy basics:
+- Simple steering/pathing (no navmesh needed): move toward player + avoid obstacles minimally.
+- Spawn with small telegraph effect (fade-in circle) to reduce unfair hits.
+- On death: particle burst + sound + add to kill count + drop coins chance.
+
+## Waves + Difficulty Scaling
+- Waves last until all enemies are dead (or a wave timer ends then spawns stop).
+- Early waves: mostly Chasers.
+- Mid waves: introduce Shooters.
+- Later waves: add Tanks.
+- Every 5 waves: “Elite wave” (increase HP/speed modestly).
+- Scaling rule: each wave increases enemy HP by ~7% and speed by ~3% with a speed cap.
+
+Show “WAVE X” and “WAVE CLEARED” banners with satisfying animation.
+
+## Currency + Meta Progression
+- Coins earned during a run.
+- On death, convert run coins to account coins.
+- Meta upgrades store persistently (save/load):
+  - +10 max HP (levelable)
+  - +5% move speed (levelable)
+  - Unlock new upgrades into the pool (at least 3 unlocks)
+- Keep meta progression small and not grindy.
+
+## Upgrade System (in-run)
+Create a data-driven upgrade system:
+- Upgrades are defined in a data list (name, description, rarity, effect function, stacking rules).
+- After each wave, present 3 random upgrades (weighted by rarity).
+- Player selects 1.
+- Implement at least 12 upgrades total:
+  Offensive:
+  - +20% fire rate
+  - +15% damage
+  - Piercing (bullets pass through 1 enemy)
+  - Crits (10% crit chance, 2x damage)
+  - Chain Lightning (10% chance to zap a nearby enemy)
+  - Orbiting Blades (2 blades orbiting, contact damage)
+  Defensive/Mobility:
+  - +25 max HP
+  - Life on Kill (heal 1 per kill, cap per wave)
+  - Dash cooldown -20%
+  - Shield (blocks 1 hit per wave)
+  Risk/Reward:
+  - Glass Cannon: +40% damage, -25% max HP
+  - Greed: +30% coins, enemies +10% speed
+
+Make the upgrade effects visible (UI updates, stat changes, icons if possible).
+
+## “Juice” / Polish Requirements
+- Screen shake on taking damage and on elite kills (small).
+- Hit flash on enemies.
+- Particle effects on hits and deaths.
+- Damage numbers floating up.
+- Brief slow-motion (0.15s) when an elite enemy dies.
+- Sound toggles in settings (SFX/Music sliders if easy).
+- Minimal background music loop (placeholder ok).
+
+## Save/Load
+- Save meta upgrades, high score, and settings (volume).
+- Use a simple local file (JSON) approach.
+
+## Balancing Targets
+- Baseline player DPS ~30.
+- Enemy HP: Chaser=20, Shooter=35, Tank=120 (before scaling).
+- Enemy contact or bullet damage: 10–15.
+- Early wave duration feel: 15–25 seconds, later: 30–45 seconds.
+
+## Deliverables
+- Complete runnable code.
+- README: how to run, controls, known limitations.
+- Clear file structure and explanation of where to add new enemies and upgrades.
+- Include a small debug panel or hotkeys for testing (spawn enemy, skip wave, give coins) that can be disabled.
+
+Build it so it’s easy to expand later (more enemies, more upgrades, different rooms), but keep the scope strictly MVP and playable now.
+
+## Phase 1: Project Setup
+
+1. **Create feature_list.json** - Save to /app/feature_list.json:
+```json
+[
+  {
+    "id": "game-initialization",
+    "category": "functional",
+    "description": "Initialize the game engine, load assets, and set up the main game window with proper resolution and frame rate",
+    "steps": [
+      "Launch the game executable",
+      "Verify game window opens with correct dimensions",
+      "Confirm game runs at stable frame rate",
+      "Check that basic game systems are loaded without errors"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 1
+  },
+  {
+    "id": "main-menu-display",
+    "category": "ui",
+    "description": "Show the main menu screen with Play, Meta Upgrades, Settings, and Quit buttons in a clean layout",
+    "steps": [
+      "Start the game and observe main menu appears",
+      "Verify all four menu options are visible and properly labeled",
+      "Check that menu has appropriate visual styling",
+      "Confirm menu is the default state when game launches"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 2
+  },
+  {
+    "id": "main-menu-navigation",
+    "category": "navigation",
+    "description": "Allow players to click menu buttons to navigate to different game states and exit the game",
+    "steps": [
+      "Click Play button and verify game starts",
+      "Click Meta Upgrades and verify upgrade screen opens",
+      "Click Settings and verify settings screen opens",
+      "Click Quit and verify game closes properly"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 3
+  },
+  {
+    "id": "arena-room-creation",
+    "category": "functional",
+    "description": "Generate the single rectangular arena room with walls that block player and enemy movement",
+    "steps": [
+      "Start a new game run",
+      "Verify rectangular arena boundaries are visible",
+      "Test that player cannot move outside arena walls",
+      "Confirm enemies cannot spawn or move outside boundaries"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 4
+  },
+  {
+    "id": "arena-obstacles",
+    "category": "functional",
+    "description": "Place 4 pillar obstacles in the arena that block movement and bullets for both player and enemies",
+    "steps": [
+      "Enter the arena and locate all 4 pillars",
+      "Walk player into pillars and verify movement is blocked",
+      "Shoot bullets at pillars and confirm they are stopped",
+      "Observe enemies avoiding or being blocked by pillars"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 5
+  },
+  {
+    "id": "player-character-spawn",
+    "category": "functional",
+    "description": "Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)",
+    "steps": [
+      "Start a new run",
+      "Verify player character appears in arena center",
+      "Check that HP bar shows 100/100 health",
+      "Confirm player is ready to receive input commands"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 6
+  },
+  {
+    "id": "player-movement-wasd",
+    "category": "functional",
+    "description": "Enable smooth player movement using WASD keys with proper collision detection against walls and obstacles",
+    "steps": [
+      "Press W key and verify player moves up",
+      "Press A key and verify player moves left",
+      "Press S key and verify player moves down",
+      "Press D key and verify player moves right"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 7
+  },
+  {
+    "id": "player-movement-arrows",
+    "category": "functional",
+    "description": "Enable smooth player movement using arrow keys as alternative to WASD with identical functionality",
+    "steps": [
+      "Press Up arrow and verify player moves up",
+      "Press Left arrow and verify player moves left",
+      "Press Down arrow and verify player moves down",
+      "Press Right arrow and verify player moves right"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 8
+  },
+  {
+    "id": "mouse-aiming",
+    "category": "functional",
+    "description": "Allow player to aim their weapon using mouse cursor position relative to player character",
+    "steps": [
+      "Move mouse around the screen",
+      "Verify player character or weapon visually indicates aim direction",
+      "Confirm aiming works smoothly in all directions",
+      "Test that aiming updates in real-time with mouse movement"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 9
+  },
+  {
+    "id": "basic-shooting",
+    "category": "functional",
+    "description": "Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread",
+    "steps": [
+      "Left click and verify bullet fires toward mouse cursor",
+      "Hold left click and confirm sustained fire at proper rate",
+      "Observe slight bullet spread for multiple shots",
+      "Check that bullets travel across the arena properly"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 10
+  },
+  {
+    "id": "bullet-collision",
+    "category": "functional",
+    "description": "Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact",
+    "steps": [
+      "Shoot bullets at arena walls and verify they disappear",
+      "Fire at pillar obstacles and confirm bullets are stopped",
+      "Shoot at enemies and check bullets hit and disappear",
+      "Verify bullets don't pass through solid objects"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 11
+  },
+  {
+    "id": "dash-ability",
+    "category": "functional",
+    "description": "Implement dash ability with Space key providing 0.25s invulnerability and 2.5s cooldown",
+    "steps": [
+      "Press Space and verify player dashes in movement direction",
+      "Confirm player is invulnerable during dash duration",
+      "Check that dash has 2.5 second cooldown before reuse",
+      "Test that dash doesn't work while on cooldown"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 12
+  },
+  {
+    "id": "dash-visual-feedback",
+    "category": "ui",
+    "description": "Show dash trail effect and cooldown indicator so players know when dash is available",
+    "steps": [
+      "Use dash and observe visual trail effect",
+      "Check cooldown indicator appears after dash use",
+      "Verify indicator shows remaining cooldown time",
+      "Confirm indicator disappears when dash is ready"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 13
+  },
+  {
+    "id": "enemy-chaser-spawn",
+    "category": "functional",
+    "description": "Spawn Chaser enemies that run directly at the player with low HP and high frequency",
+    "steps": [
+      "Start a wave and observe Chaser enemies appearing",
+      "Verify Chasers move directly toward player position",
+      "Confirm Chasers have low health (around 20 HP)",
+      "Check that multiple Chasers can be active simultaneously"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 14
+  },
+  {
+    "id": "enemy-shooter-spawn",
+    "category": "functional",
+    "description": "Spawn Shooter enemies that maintain distance and fire slow bullets at the player",
+    "steps": [
+      "Reach waves where Shooters appear",
+      "Observe Shooters keeping distance from player",
+      "Verify Shooters fire bullets toward player position",
+      "Confirm Shooter bullets travel at appropriate speed"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 15
+  },
+  {
+    "id": "enemy-tank-spawn",
+    "category": "functional",
+    "description": "Spawn Tank enemies that move slowly but have high HP and deal significant damage",
+    "steps": [
+      "Progress to waves with Tank enemies",
+      "Verify Tanks move slower than other enemy types",
+      "Confirm Tanks require many hits to defeat",
+      "Check that Tank contact damage is higher than other enemies"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 16
+  },
+  {
+    "id": "enemy-spawn-telegraph",
+    "category": "ui",
+    "description": "Show visual telegraph effect (fade-in circle) before enemies fully spawn to prevent unfair damage",
+    "steps": [
+      "Watch for enemy spawn locations during waves",
+      "Verify telegraph circle appears before enemy spawns",
+      "Confirm telegraph gives player time to react",
+      "Check that enemies don't deal damage during telegraph phase"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 17
+  },
+  {
+    "id": "enemy-ai-pathfinding",
+    "category": "functional",
+    "description": "Implement basic enemy AI that moves toward player while avoiding obstacles and arena boundaries",
+    "steps": [
+      "Observe enemies navigating around pillar obstacles",
+      "Verify enemies don't get stuck on walls",
+      "Confirm enemies adjust path when player moves",
+      "Check that enemies can navigate around each other"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 18
+  },
+  {
+    "id": "enemy-damage-to-player",
+    "category": "functional",
+    "description": "Enable enemies to damage player through contact or projectiles, reducing player HP",
+    "steps": [
+      "Allow enemy to touch player character",
+      "Verify player HP decreases by appropriate amount",
+      "Get hit by enemy projectile and confirm damage",
+      "Check that damage is applied only once per contact"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 19
+  },
+  {
+    "id": "player-damage-to-enemies",
+    "category": "functional",
+    "description": "Allow player bullets to damage enemies, reducing their HP and eventually destroying them",
+    "steps": [
+      "Shoot bullets at various enemy types",
+      "Verify enemies take damage from bullet hits",
+      "Confirm enemies are destroyed when HP reaches zero",
+      "Check that different enemies have different HP amounts"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 20
+  },
+  {
+    "id": "enemy-death-effects",
+    "category": "ui",
+    "description": "Show particle burst, play sound, and update kill count when enemies die",
+    "steps": [
+      "Kill an enemy and observe particle effect",
+      "Verify death sound plays (if audio enabled)",
+      "Check that kill counter increases",
+      "Confirm enemy is properly removed from game"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 21
+  },
+  {
+    "id": "wave-system-progression",
+    "category": "functional",
+    "description": "Manage wave progression where each wave spawns enemies until all are defeated, then advances to next wave",
+    "steps": [
+      "Complete a wave by killing all enemies",
+      "Verify wave advances to next number",
+      "Confirm new wave begins with fresh enemy spawns",
+      "Check that wave counter updates in UI"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 22
+  },
+  {
+    "id": "wave-banners",
+    "category": "ui",
+    "description": "Display 'WAVE X' at wave start and 'WAVE CLEARED' at wave completion with satisfying animations",
+    "steps": [
+      "Start a new wave and observe 'WAVE X' banner",
+      "Complete a wave and see 'WAVE CLEARED' message",
+      "Verify banners have appropriate animations",
+      "Confirm banners don't obstruct gameplay"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 23
+  },
+  {
+    "id": "difficulty-scaling",
+    "category": "functional",
+    "description": "Increase enemy HP by 7% and speed by 3% each wave, with elite waves every 5 waves",
+    "steps": [
+      "Progress through multiple waves",
+      "Observe enemies becoming harder to kill over time",
+      "Notice enemies moving slightly faster in later waves",
+      "Reach wave 5 and confirm elite wave mechanics"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 24
+  },
+  {
+    "id": "upgrade-selection-screen",
+    "category": "ui",
+    "description": "Show upgrade selection screen between waves with 3 random upgrade cards for player to choose from",
+    "steps": [
+      "Complete a wave to trigger upgrade selection",
+      "Verify 3 different upgrade options are displayed",
+      "Confirm each upgrade shows name and description",
+      "Check that upgrades are randomly selected each time"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 25
+  },
+  {
+    "id": "upgrade-selection-interaction",
+    "category": "functional",
+    "description": "Allow player to click on one of the three upgrade cards to select and apply the upgrade",
+    "steps": [
+      "Click on first upgrade card option",
+      "Verify upgrade is applied to player stats",
+      "Confirm upgrade selection screen closes",
+      "Check that next wave begins after selection"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 26
+  },
+  {
+    "id": "offensive-upgrades",
+    "category": "functional",
+    "description": "Implement offensive upgrades: fire rate, damage, piercing, crits, chain lightning, orbiting blades",
+    "steps": [
+      "Select fire rate upgrade and verify faster shooting",
+      "Choose damage upgrade and confirm higher bullet damage",
+      "Test piercing upgrade allows bullets through enemies",
+      "Verify crit upgrade occasionally deals double damage"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 27
+  },
+  {
+    "id": "defensive-upgrades",
+    "category": "functional",
+    "description": "Implement defensive upgrades: max HP, life on kill, dash cooldown reduction, shield",
+    "steps": [
+      "Select max HP upgrade and verify health bar increases",
+      "Choose life on kill and confirm healing after enemy deaths",
+      "Test dash cooldown reduction for faster dash availability",
+      "Verify shield upgrade blocks incoming damage"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 28
+  },
+  {
+    "id": "risk-reward-upgrades",
+    "category": "functional",
+    "description": "Implement risk/reward upgrades like Glass Cannon (more damage, less HP) and Greed (more coins, faster enemies)",
+    "steps": [
+      "Select Glass Cannon and verify damage increase and HP decrease",
+      "Choose Greed upgrade and confirm more coin drops",
+      "Check that Greed makes enemies move faster",
+      "Verify trade-offs are properly balanced"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 29
+  },
+  {
+    "id": "coin-collection",
+    "category": "functional",
+    "description": "Allow players to collect coins dropped by enemies and environmental sources during runs",
+    "steps": [
+      "Kill enemies and observe coin drops",
+      "Walk over coins to collect them",
+      "Verify coin counter increases in UI",
+      "Check coins persist throughout the run"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 30
+  },
+  {
+    "id": "in-run-hud",
+    "category": "ui",
+    "description": "Display HUD showing HP bar, current wave number, time survived, and coins collected",
+    "steps": [
+      "Start a run and verify HP bar is visible",
+      "Check wave number updates as waves progress",
+      "Confirm time counter increases during gameplay",
+      "Verify coin counter shows collected coins"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 31
+  },
+  {
+    "id": "pause-functionality",
+    "category": "functional",
+    "description": "Allow player to pause/unpause the game using Escape key, freezing all game action",
+    "steps": [
+      "Press Escape during gameplay",
+      "Verify game action stops completely",
+      "Press Escape again to unpause",
+      "Confirm game resumes from exact same state"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 32
+  },
+  {
+    "id": "pause-menu",
+    "category": "ui",
+    "description": "Show pause menu overlay with Resume, Restart, and Exit to Menu options when game is paused",
+    "steps": [
+      "Pause the game and observe menu overlay",
+      "Click Resume and verify game unpauses",
+      "Test Restart option starts new run",
+      "Verify Exit to Menu returns to main menu"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 33
+  },
+  {
+    "id": "player-death-detection",
+    "category": "functional",
+    "description": "Detect when player HP reaches zero and trigger game over state",
+    "steps": [
+      "Allow player to take damage until HP reaches zero",
+      "Verify game over state is triggered",
+      "Confirm gameplay stops when player dies",
+      "Check that death is detected immediately"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 34
+  },
+  {
+    "id": "game-over-screen",
+    "category": "ui",
+    "description": "Display game over screen with run statistics: time survived, wave reached, kills, coins earned",
+    "steps": [
+      "Die and observe game over screen appears",
+      "Verify time survived is displayed accurately",
+      "Check wave reached shows highest wave completed",
+      "Confirm kill count and coins earned are shown"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 35
+  },
+  {
+    "id": "game-over-options",
+    "category": "navigation",
+    "description": "Provide Restart and Return to Menu buttons on game over screen for quick continuation",
+    "steps": [
+      "Reach game over screen",
+      "Click Restart and verify new run begins immediately",
+      "Die again and click Return to Menu",
+      "Confirm main menu appears with all options available"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 36
+  },
+  {
+    "id": "high-score-tracking",
+    "category": "data",
+    "description": "Track and display high score based on waves reached or time survived across all runs",
+    "steps": [
+      "Complete several runs with different performance",
+      "Verify highest score is remembered",
+      "Check high score displays on game over screen",
+      "Confirm high score persists between game sessions"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 37
+  },
+  {
+    "id": "meta-upgrade-currency",
+    "category": "functional",
+    "description": "Convert run coins to persistent account coins on death for meta progression purchases",
+    "steps": [
+      "Collect coins during a run",
+      "Die and verify coins are added to account total",
+      "Check account coins persist between sessions",
+      "Confirm conversion happens automatically on death"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 38
+  },
+  {
+    "id": "meta-upgrades-screen",
+    "category": "ui",
+    "description": "Display meta upgrades menu showing available permanent upgrades and their costs",
+    "steps": [
+      "Access Meta Upgrades from main menu",
+      "Verify available upgrades are listed with costs",
+      "Check current account coin balance is displayed",
+      "Confirm upgrade descriptions explain their effects"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 39
+  },
+  {
+    "id": "meta-upgrade-purchasing",
+    "category": "functional",
+    "description": "Allow players to spend account coins on permanent upgrades like HP, move speed, and unlock new upgrades",
+    "steps": [
+      "Have sufficient coins for an upgrade",
+      "Purchase a meta upgrade and verify coins are deducted",
+      "Start a new run and confirm upgrade effect is active",
+      "Check that purchased upgrades persist between sessions"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 40
+  },
+  {
+    "id": "settings-screen",
+    "category": "ui",
+    "description": "Provide settings screen with audio controls and other game options",
+    "steps": [
+      "Access Settings from main menu",
+      "Verify audio sliders for SFX and music are present",
+      "Adjust settings and confirm changes take effect",
+      "Check settings are saved between game sessions"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 41
+  },
+  {
+    "id": "save-load-system",
+    "category": "data",
+    "description": "Save and load meta upgrades, high scores, and settings to local file storage",
+    "steps": [
+      "Make progress and change settings",
+      "Close and restart the game",
+      "Verify all progress and settings are restored",
+      "Check save file is created in appropriate location"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 42
+  },
+  {
+    "id": "screen-shake-effects",
+    "category": "ui",
+    "description": "Add screen shake effects when player takes damage and when elite enemies are defeated",
+    "steps": [
+      "Take damage and observe screen shake effect",
+      "Kill an elite enemy and verify screen shake occurs",
+      "Check that screen shake is brief and not disorienting",
+      "Confirm shake intensity is appropriate for each trigger"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 43
+  },
+  {
+    "id": "hit-flash-feedback",
+    "category": "ui",
+    "description": "Show visual flash effect on enemies when they take damage to provide clear hit feedback",
+    "steps": [
+      "Shoot enemies and observe hit flash effects",
+      "Verify flash is visible but brief",
+      "Check that flash color contrasts with enemy color",
+      "Confirm flash occurs for each successful hit"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 44
+  },
+  {
+    "id": "particle-effects",
+    "category": "ui",
+    "description": "Display particle effects for hits, deaths, and other significant game events",
+    "steps": [
+      "Observe particles when bullets hit enemies",
+      "Verify particle burst when enemies die",
+      "Check particles for player dash trail",
+      "Confirm particles enhance visual feedback without cluttering screen"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 45
+  },
+  {
+    "id": "damage-numbers",
+    "category": "ui",
+    "description": "Show floating damage numbers when enemies take damage to provide clear feedback",
+    "steps": [
+      "Deal damage to enemies and observe floating numbers",
+      "Verify numbers show correct damage amounts",
+      "Check that numbers float upward and fade out",
+      "Confirm numbers are readable but don't obstruct gameplay"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 46
+  },
+  {
+    "id": "slow-motion-effect",
+    "category": "ui",
+    "description": "Apply brief slow-motion effect (0.15s) when elite enemies are defeated for dramatic impact",
+    "steps": [
+      "Defeat an elite enemy",
+      "Verify slow-motion effect occurs briefly",
+      "Check that effect duration is exactly 0.15 seconds",
+      "Confirm normal speed resumes automatically"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 47
+  },
+  {
+    "id": "audio-system",
+    "category": "functional",
+    "description": "Implement basic audio system with sound effects for shooting, hits, deaths, and background music",
+    "steps": [
+      "Shoot weapon and verify shooting sound plays",
+      "Hit enemies and confirm hit sound effects",
+      "Check background music plays during gameplay",
+      "Verify audio can be controlled through settings"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 48
+  },
+  {
+    "id": "state-machine-management",
+    "category": "functional",
+    "description": "Implement clean state machine managing transitions between MENU → RUN → UPGRADE → GAMEOVER states",
+    "steps": [
+      "Navigate through all game states in sequence",
+      "Verify smooth transitions between states",
+      "Check that each state properly initializes and cleans up",
+      "Confirm no state conflicts or invalid transitions occur"
+    ],
+    "priority": 1,
+    "passes": false,
+    "selected": true,
+    "order": 52
+  },
+  {
+    "id": "enemy-knockback",
+    "category": "functional",
+    "description": "Apply knockback or micro-stun effect to enemies when hit by player bullets",
+    "steps": [
+      "Shoot enemies and observe knockback effect",
+      "Verify enemies are briefly pushed away from impact",
+      "Check that knockback doesn't break enemy AI",
+      "Confirm effect provides satisfying hit feedback"
+    ],
+    "priority": 3,
+    "passes": false,
+    "selected": true,
+    "order": 53
+  },
+  {
+    "id": "upgrade-visual-indicators",
+    "category": "ui",
+    "description": "Show visual indicators when upgrades are active (UI updates, stat changes, icons)",
+    "steps": [
+      "Select various upgrades during runs",
+      "Verify UI updates to reflect upgrade effects",
+      "Check for visual indicators of active upgrades",
+      "Confirm stat changes are visible in interface"
+    ],
+    "priority": 2,
+    "passes": false,
+    "selected": true,
+    "order": 54
+  }
+]
+```
+
+2. **Create init.sh** - Create /app/init.sh script for starting dev servers
+
+3. **Set up project structure** based on the boilerplate
+
+## Phase 2: Implement ALL Selected Features
+
+You MUST implement the following 51 features in order:
+
+1. **game-initialization** (functional): Initialize the game engine, load assets, and set up the main game window with proper resolution and frame rate
+2. **main-menu-display** (ui): Show the main menu screen with Play, Meta Upgrades, Settings, and Quit buttons in a clean layout
+3. **main-menu-navigation** (navigation): Allow players to click menu buttons to navigate to different game states and exit the game
+4. **arena-room-creation** (functional): Generate the single rectangular arena room with walls that block player and enemy movement
+5. **player-character-spawn** (functional): Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)
+6. **player-movement-wasd** (functional): Enable smooth player movement using WASD keys with proper collision detection against walls and obstacles
+7. **mouse-aiming** (functional): Allow player to aim their weapon using mouse cursor position relative to player character
+8. **basic-shooting** (functional): Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread
+9. **bullet-collision** (functional): Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact
+10. **dash-ability** (functional): Implement dash ability with Space key providing 0.25s invulnerability and 2.5s cooldown
+11. **enemy-chaser-spawn** (functional): Spawn Chaser enemies that run directly at the player with low HP and high frequency
+12. **enemy-shooter-spawn** (functional): Spawn Shooter enemies that maintain distance and fire slow bullets at the player
+13. **enemy-tank-spawn** (functional): Spawn Tank enemies that move slowly but have high HP and deal significant damage
+14. **enemy-damage-to-player** (functional): Enable enemies to damage player through contact or projectiles, reducing player HP
+15. **player-damage-to-enemies** (functional): Allow player bullets to damage enemies, reducing their HP and eventually destroying them
+16. **wave-system-progression** (functional): Manage wave progression where each wave spawns enemies until all are defeated, then advances to next wave
+17. **upgrade-selection-screen** (ui): Show upgrade selection screen between waves with 3 random upgrade cards for player to choose from
+18. **upgrade-selection-interaction** (functional): Allow player to click on one of the three upgrade cards to select and apply the upgrade
+19. **offensive-upgrades** (functional): Implement offensive upgrades: fire rate, damage, piercing, crits, chain lightning, orbiting blades
+20. **defensive-upgrades** (functional): Implement defensive upgrades: max HP, life on kill, dash cooldown reduction, shield
+21. **in-run-hud** (ui): Display HUD showing HP bar, current wave number, time survived, and coins collected
+22. **pause-functionality** (functional): Allow player to pause/unpause the game using Escape key, freezing all game action
+23. **player-death-detection** (functional): Detect when player HP reaches zero and trigger game over state
+24. **game-over-screen** (ui): Display game over screen with run statistics: time survived, wave reached, kills, coins earned
+25. **game-over-options** (navigation): Provide Restart and Return to Menu buttons on game over screen for quick continuation
+26. **state-machine-management** (functional): Implement clean state machine managing transitions between MENU → RUN → UPGRADE → GAMEOVER states
+27. **arena-obstacles** (functional): Place 4 pillar obstacles in the arena that block movement and bullets for both player and enemies
+28. **player-movement-arrows** (functional): Enable smooth player movement using arrow keys as alternative to WASD with identical functionality
+29. **dash-visual-feedback** (ui): Show dash trail effect and cooldown indicator so players know when dash is available
+30. **enemy-spawn-telegraph** (ui): Show visual telegraph effect (fade-in circle) before enemies fully spawn to prevent unfair damage
+31. **enemy-ai-pathfinding** (functional): Implement basic enemy AI that moves toward player while avoiding obstacles and arena boundaries
+32. **enemy-death-effects** (ui): Show particle burst, play sound, and update kill count when enemies die
+33. **wave-banners** (ui): Display 'WAVE X' at wave start and 'WAVE CLEARED' at wave completion with satisfying animations
+34. **difficulty-scaling** (functional): Increase enemy HP by 7% and speed by 3% each wave, with elite waves every 5 waves
+35. **risk-reward-upgrades** (functional): Implement risk/reward upgrades like Glass Cannon (more damage, less HP) and Greed (more coins, faster enemies)
+36. **coin-collection** (functional): Allow players to collect coins dropped by enemies and environmental sources during runs
+37. **pause-menu** (ui): Show pause menu overlay with Resume, Restart, and Exit to Menu options when game is paused
+38. **high-score-tracking** (data): Track and display high score based on waves reached or time survived across all runs
+39. **meta-upgrade-currency** (functional): Convert run coins to persistent account coins on death for meta progression purchases
+40. **meta-upgrades-screen** (ui): Display meta upgrades menu showing available permanent upgrades and their costs
+41. **meta-upgrade-purchasing** (functional): Allow players to spend account coins on permanent upgrades like HP, move speed, and unlock new upgrades
+42. **save-load-system** (data): Save and load meta upgrades, high scores, and settings to local file storage
+43. **hit-flash-feedback** (ui): Show visual flash effect on enemies when they take damage to provide clear hit feedback
+44. **upgrade-visual-indicators** (ui): Show visual indicators when upgrades are active (UI updates, stat changes, icons)
+45. **settings-screen** (ui): Provide settings screen with audio controls and other game options
+46. **screen-shake-effects** (ui): Add screen shake effects when player takes damage and when elite enemies are defeated
+47. **particle-effects** (ui): Display particle effects for hits, deaths, and other significant game events
+48. **damage-numbers** (ui): Show floating damage numbers when enemies take damage to provide clear feedback
+49. **slow-motion-effect** (ui): Apply brief slow-motion effect (0.15s) when elite enemies are defeated for dramatic impact
+50. **audio-system** (functional): Implement basic audio system with sound effects for shooting, hits, deaths, and background music
+51. **enemy-knockback** (functional): Apply knockback or micro-stun effect to enemies when hit by player bullets
+
+### Implementation Order (Frontend First)
+For each feature, follow this exact order to create early user-visible impact:
+1. **UI First**: Build screens/components with mock data and polished styling.
+2. **Types Second**: Add/adjust shared types/interfaces used by the UI and API.
+3. **Backend Last**: Implement API/database changes and wire the UI to real data.
+
+### Implementation Rules
+- Implement each feature fully with proper error handling
+- After implementing each feature, update feature_list.json to set "passes": true for that feature
+- After marking a feature complete in feature_list.json, call the update_feature_progress tool with the featureId to notify the UI immediately (the user will see real-time progress)
+- Use proper TypeScript types throughout
+- Follow React best practices
+
+## Phase 3: Finalize
+- Initialize the database
+- Create progress log
+
+## AI Integration (LaunchPulse AI Proxy)
+
+This project has AI integration enabled. Use the LaunchPulse AI wrapper for all AI/LLM operations.
+
+### ⚠️ CRITICAL CONSTRAINTS - DO NOT VIOLATE
+- **DO NOT** run `npm install openai` or any AI SDK
+- **DO NOT** add OPENAI_API_KEY or any AI provider keys to .env
+
+**WHY**: AI is ALREADY configured through LaunchPulse proxy.
+
+### Available AI Components
+- **./__create/ai** - OpenAI-compatible API wrapper
+- **./hooks/useAI** - Hooks: `useChat()` and `useAsk()`
+
+### Usage
+```typescript
+import { ai } from './__create/ai';
+const answer = await ai.ask('Question here');
+
+import { useChat } from './hooks/useAI';
+const { messages, send } = useChat();
+```
+
+### Environment Variables (Auto-Injected)
+- `VITE_LAUNCHPULSE_AI_KEY`
+- `VITE_LAUNCHPULSE_PROJECT_ID`
+- `VITE_LAUNCHPULSE_API_URL`
+
+
+## Database Integration (PostgreSQL via OpenCode Tools)
+
+This project has a PostgreSQL database connected. You have access to database tools:
+
+### Available Database Tools
+- **query_database** - Execute SQL queries (SELECT, INSERT, UPDATE, DELETE). Returns rows and row count.
+- **list_tables** - List all tables in the public schema
+- **describe_table** - Get column information for a specific table (name, type, nullable, default)
+
+### Usage Examples
+```
+// List all tables
+Use the list_tables tool
+
+// Describe a table
+Use the describe_table tool with table_name: "users"
+
+// Run a query
+Use the query_database tool with sql: "SELECT * FROM users LIMIT 5"
+```
+
+### Database Info
+- Database: app_you_are_an_expert_game_dev_1768666029562
+- Host: ep-steep-pine-a4cw7wfv.us-east-1.aws.neon.tech
+
+### Schema & Initialization (Generated Apps)
+- Schema file (from backend boilerplate): `/app/backend/db.sql`
+- Apply schema: `cd /app/backend && node initdb.js` (uses DATABASE_URL)
+- Add queries/endpoints in `/app/backend/server.ts` using the existing `pool` from `pg`
+
+### ⚠️ IMPORTANT
+- Always use parameterized queries for user input to prevent SQL injection
+- The database connection uses the project's DATABASE_URL (already configured)
+- These tools connect directly to the user's Neon PostgreSQL database
