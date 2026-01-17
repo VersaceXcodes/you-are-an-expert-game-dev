@@ -57,7 +57,10 @@
     "priority": 1,
     "passes": false,
     "selected": true,
-    "order": 4
+    "order": 4,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T16:21:35.349Z",
+    "attempts": 1
   },
   {
     "id": "arena-obstacles",

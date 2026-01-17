@@ -1,4 +1,4 @@
-import { Player, GameState, Entity, Bullet } from './types';
+import { Player, GameState, Entity, Bullet, Enemy } from './types';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, WALL_THICKNESS, ARENA_X, ARENA_Y, ARENA_WIDTH, ARENA_HEIGHT } from './constants';
 import { InputManager } from './InputManager';
 
@@ -7,6 +7,7 @@ export class GameLogic {
   state: GameState = 'MENU';
   obstacles: Entity[] = [];
   bullets: Bullet[] = [];
+  enemies: Enemy[] = [];
   
   constructor() {
     this.reset();
@@ -37,6 +38,7 @@ export class GameLogic {
     };
 
     this.bullets = [];
+    this.enemies = [];
 
     // Create 4 pillars
     const pillarSize = 60;
@@ -47,6 +49,16 @@ export class GameLogic {
       { id: 'p3', x: ARENA_X + padding, y: ARENA_Y + ARENA_HEIGHT - padding, width: pillarSize, height: pillarSize, color: '#666', markedForDeletion: false },
       { id: 'p4', x: ARENA_X + ARENA_WIDTH - padding, y: ARENA_Y + ARENA_HEIGHT - padding, width: pillarSize, height: pillarSize, color: '#666', markedForDeletion: false },
     ];
+  }
+
+  clampToArena(entity: Entity, nextX: number, nextY: number): { x: number, y: number } {
+    const halfW = entity.width / 2;
+    const halfH = entity.height / 2;
+
+    const x = Math.max(ARENA_X + halfW, Math.min(ARENA_X + ARENA_WIDTH - halfW, nextX));
+    const y = Math.max(ARENA_Y + halfH, Math.min(ARENA_Y + ARENA_HEIGHT - halfH, nextY));
+    
+    return { x, y };
   }
 
   update(dt: number, input: InputManager, mouseX: number, mouseY: number) {
@@ -78,11 +90,9 @@ export class GameLogic {
     const nextY = this.player.y + my * moveSpeed;
 
     // Feature 4: Wall collisions (Clamp)
-    const halfW = this.player.width / 2;
-    const halfH = this.player.height / 2;
-
-    let finalX = Math.max(ARENA_X + halfW, Math.min(ARENA_X + ARENA_WIDTH - halfW, nextX));
-    let finalY = Math.max(ARENA_Y + halfH, Math.min(ARENA_Y + ARENA_HEIGHT - halfH, nextY));
+    const clamped = this.clampToArena(this.player, nextX, nextY);
+    let finalX = clamped.x;
+    let finalY = clamped.y;
 
     // Feature 27: Obstacle collisions
     for (const obs of this.obstacles) {
@@ -96,6 +106,30 @@ export class GameLogic {
 
     this.player.x = finalX;
     this.player.y = finalY;
+
+    // Update Enemies
+    for (const enemy of this.enemies) {
+      // Placeholder movement logic (enemies don't move yet but need to be constrained)
+      const enemyNextX = enemy.x + enemy.vx * dt;
+      const enemyNextY = enemy.y + enemy.vy * dt;
+
+      const clampedEnemy = this.clampToArena(enemy, enemyNextX, enemyNextY);
+      let eFinalX = clampedEnemy.x;
+      let eFinalY = clampedEnemy.y;
+
+      // Enemy vs Obstacle collision
+      for (const obs of this.obstacles) {
+        if (this.checkCollision({ ...enemy, x: eFinalX, y: enemy.y }, obs)) {
+          eFinalX = enemy.x;
+        }
+        if (this.checkCollision({ ...enemy, x: eFinalX, y: eFinalY }, obs)) {
+          eFinalY = enemy.y;
+        }
+      }
+
+      enemy.x = eFinalX;
+      enemy.y = eFinalY;
+    }
 
     // Feature 8: Shooting
     this.player.lastFired += dt;
@@ -188,6 +222,12 @@ export class GameLogic {
         obs.width,
         obs.height
       );
+    }
+
+    // Draw Enemies
+    for (const enemy of this.enemies) {
+      ctx.fillStyle = enemy.color;
+      ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
     }
 
     // Feature 8/9: Draw Bullets

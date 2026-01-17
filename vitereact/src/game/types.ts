@@ -42,3 +42,13 @@ export interface Bullet extends Entity {
   vy: number;
   damage: number;
 }
+
+export interface Enemy extends Entity {
+  hp: number;
+  maxHp: number;
+  speed: number;
+  vx: number;
+  vy: number;
+  damage: number;
+  type: 'CHASER' | 'SHOOTER' | 'TANK';
+}
