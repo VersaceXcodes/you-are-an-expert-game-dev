@@ -27,6 +27,11 @@ import {
   ENEMY_SHOOTER_BULLET_SPEED,
   ENEMY_SHOOTER_BULLET_SIZE,
   ENEMY_SHOOTER_BULLET_COLOR,
+  ENEMY_TANK_HP,
+  ENEMY_TANK_SPEED,
+  ENEMY_TANK_DAMAGE,
+  ENEMY_TANK_SIZE,
+  ENEMY_TANK_COLOR,
   WAVE_INTERVAL
 } from './constants';
 import { InputManager } from './InputManager';
@@ -89,9 +94,16 @@ export class GameLogic {
     for (let i = 0; i < waveSize; i++) {
       // Determine enemy type based on wave
       // Wave 1: All Chasers
-      // Wave 2+: Mix of Chasers and Shooters
-      let type: 'CHASER' | 'SHOOTER' = 'CHASER';
-      if (this.currentWave >= 2) {
+      // Wave 2: Mix of Chasers and Shooters
+      // Wave 3+: Mix of Chasers, Shooters, and Tanks
+      let type: 'CHASER' | 'SHOOTER' | 'TANK' = 'CHASER';
+      
+      if (this.currentWave >= 3) {
+        const rand = Math.random();
+        if (rand < 0.2) type = 'TANK'; // 20% Tanks
+        else if (rand < 0.6) type = 'SHOOTER'; // 40% Shooters
+        else type = 'CHASER'; // 40% Chasers
+      } else if (this.currentWave >= 2) {
         type = Math.random() > 0.5 ? 'SHOOTER' : 'CHASER';
       }
 
@@ -134,6 +146,23 @@ export class GameLogic {
           vy: 0,
           damage: ENEMY_CHASER_DAMAGE,
           type: 'CHASER',
+          markedForDeletion: false
+        });
+      } else if (type === 'TANK') {
+        this.enemies.push({
+          id: `enemy_${Date.now()}_${i}`,
+          x,
+          y,
+          width: ENEMY_TANK_SIZE,
+          height: ENEMY_TANK_SIZE,
+          color: ENEMY_TANK_COLOR,
+          hp: ENEMY_TANK_HP,
+          maxHp: ENEMY_TANK_HP,
+          speed: ENEMY_TANK_SPEED,
+          vx: 0,
+          vy: 0,
+          damage: ENEMY_TANK_DAMAGE,
+          type: 'TANK',
           markedForDeletion: false
         });
       } else {
@@ -271,7 +300,7 @@ export class GameLogic {
       let moveX = 0;
       let moveY = 0;
 
-      if (enemy.type === 'CHASER') {
+      if (enemy.type === 'CHASER' || enemy.type === 'TANK') {
         if (dist > 0) {
           moveX = (dx / dist) * enemy.speed;
           moveY = (dy / dist) * enemy.speed;

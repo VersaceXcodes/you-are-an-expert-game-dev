@@ -254,9 +254,10 @@
     "passes": true,
     "selected": true,
     "order": 15,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T18:25:47.408Z",
-    "attempts": 1
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T18:38:00.979Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T18:38:00.979Z"
   },
   {
     "id": "enemy-tank-spawn",
@@ -269,9 +270,12 @@
       "Check that Tank contact damage is higher than other enemies"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 16
+    "order": 16,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T18:38:37.317Z",
+    "attempts": 1
   },
   {
     "id": "enemy-spawn-telegraph",

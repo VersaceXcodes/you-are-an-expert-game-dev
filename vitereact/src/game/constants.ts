@@ -32,4 +32,10 @@ export const ENEMY_SHOOTER_BULLET_SPEED = 200; // Slow bullets
 export const ENEMY_SHOOTER_BULLET_SIZE = 12;
 export const ENEMY_SHOOTER_BULLET_COLOR = '#ff00ff';
 
+export const ENEMY_TANK_HP = 100;
+export const ENEMY_TANK_SPEED = 50;
+export const ENEMY_TANK_DAMAGE = 30;
+export const ENEMY_TANK_SIZE = 48;
+export const ENEMY_TANK_COLOR = '#000080'; // Navy Blue
+
 export const WAVE_INTERVAL = 10; // Seconds between waves (placeholder)
