@@ -93,9 +93,10 @@
     "passes": true,
     "selected": true,
     "order": 6,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T16:32:34.285Z",
-    "attempts": 1
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T16:39:31.837Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T16:39:31.837Z"
   },
   {
     "id": "player-movement-wasd",
@@ -108,9 +109,10 @@
       "Press D key and verify player moves right"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 7
+    "order": 7,
+    "status": "completed"
   },
   {
     "id": "player-movement-arrows",

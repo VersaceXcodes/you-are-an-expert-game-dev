@@ -19,6 +19,9 @@ export class InputManager {
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
+    if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+      e.preventDefault();
+    }
     this.keys[e.code] = true;
   };
 
@@ -27,8 +30,8 @@ export class InputManager {
   };
 
   handleMouseMove = (e: MouseEvent) => {
-    // We'll need to adjust for canvas offset if necessary, but for now global client coordinates
-    // passed to update/draw will be mapped relative to canvas
+    this.mouse.x = e.clientX;
+    this.mouse.y = e.clientY;
   };
 
   setMousePos(x: number, y: number) {
