@@ -163,8 +163,29 @@ export class GameLogic {
         }
       }
 
+      // Feature 11: Enemy collision
+      if (!b.markedForDeletion) {
+        for (const enemy of this.enemies) {
+          if (this.checkCollision(b, enemy)) {
+            enemy.hp -= b.damage;
+            b.markedForDeletion = true;
+            if (enemy.hp <= 0) {
+              enemy.markedForDeletion = true;
+            }
+            break;
+          }
+        }
+      }
+
       if (b.markedForDeletion) {
         this.bullets.splice(i, 1);
+      }
+    }
+
+    // Cleanup dead enemies
+    for (let i = this.enemies.length - 1; i >= 0; i--) {
+      if (this.enemies[i].markedForDeletion) {
+        this.enemies.splice(i, 1);
       }
     }
   }
