@@ -362,6 +362,10 @@ export class GameLogic {
         }
       }
 
+      if (enemy.hitTimer && enemy.hitTimer > 0) {
+        enemy.hitTimer -= dt;
+      }
+
       // Simple separation logic to prevent stacking
       for (const other of this.enemies) {
         if (enemy === other) continue;
@@ -428,6 +432,7 @@ export class GameLogic {
             if (this.checkCollision(b, enemy)) {
               // console.log('Collision detected!');
               enemy.hp -= b.damage;
+              enemy.hitTimer = 0.1; // Flash for 100ms
               b.markedForDeletion = true;
               if (enemy.hp <= 0) {
                 enemy.markedForDeletion = true;
@@ -539,7 +544,11 @@ export class GameLogic {
 
     // Draw Enemies
     for (const enemy of this.enemies) {
-      ctx.fillStyle = enemy.color;
+      if (enemy.hitTimer && enemy.hitTimer > 0) {
+        ctx.fillStyle = '#ffffff';
+      } else {
+        ctx.fillStyle = enemy.color;
+      }
       ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
       
       // Draw health bar for enemies

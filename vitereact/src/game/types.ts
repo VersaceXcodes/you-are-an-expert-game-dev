@@ -56,6 +56,7 @@ export interface Enemy extends Entity {
   vy: number;
   damage: number;
   type: 'CHASER' | 'SHOOTER' | 'TANK';
+  hitTimer?: number;
   // Shooter specific
   attackRange?: number;
   fireRate?: number;

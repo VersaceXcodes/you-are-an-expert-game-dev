@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: enemy-damage-to-player
-- **Title**: Enable enemies to damage player through contact or projectiles, reducing player HP
+- **ID**: player-damage-to-enemies
+- **Title**: Allow player bullets to damage enemies, reducing their HP and eventually destroying them
 - **Category**: functional
 
 ## Description
-Enable enemies to damage player through contact or projectiles, reducing player HP
+Allow player bullets to damage enemies, reducing their HP and eventually destroying them
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Enable enemies to damage player through contact or projectiles, reducing player 
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Allow enemy to touch player character
-2. Verify player HP decreases by appropriate amount
-3. Get hit by enemy projectile and confirm damage
-4. Check that damage is applied only once per contact
+1. Shoot bullets at various enemy types
+2. Verify enemies take damage from bullet hits
+3. Confirm enemies are destroyed when HP reaches zero
+4. Check that different enemies have different HP amounts
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Enable enemies to damage player through contact or projectiles, reducing player 
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Enable enemies to damage player through contact or projectiles, reducing player HP"
+6. **Commit**: Use message "feat(functional): Allow player bullets to damage enemies, reducing their HP and eventually destroying them"
 
 ## Important
-- Implement ONLY this specific feature (ID: enemy-damage-to-player)
+- Implement ONLY this specific feature (ID: player-damage-to-enemies)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility

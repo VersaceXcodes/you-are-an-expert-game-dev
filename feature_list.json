@@ -323,8 +323,9 @@
     "selected": true,
     "order": 19,
     "status": "completed",
-    "lastAttemptAt": "2026-01-17T18:43:29.227Z",
-    "attempts": 1
+    "lastAttemptAt": "2026-01-17T18:49:01.557Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T18:49:01.557Z"
   },
   {
     "id": "player-damage-to-enemies",
@@ -337,9 +338,13 @@
       "Check that different enemies have different HP amounts"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 20
+    "order": 20,
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T18:55:00.000Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T18:55:00.000Z"
   },
   {
     "id": "enemy-death-effects",
