@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: arena-room-creation
-- **Title**: Generate the single rectangular arena room with walls that block player and enemy movement
+- **ID**: player-character-spawn
+- **Title**: Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)
 - **Category**: functional
 
 ## Description
-Generate the single rectangular arena room with walls that block player and enemy movement
+Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Generate the single rectangular arena room with walls that block player and enem
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Start a new game run
-2. Verify rectangular arena boundaries are visible
-3. Test that player cannot move outside arena walls
-4. Confirm enemies cannot spawn or move outside boundaries
+1. Start a new run
+2. Verify player character appears in arena center
+3. Check that HP bar shows 100/100 health
+4. Confirm player is ready to receive input commands
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Generate the single rectangular arena room with walls that block player and enem
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Generate the single rectangular arena room with walls that block player and enemy movement"
+6. **Commit**: Use message "feat(functional): Spawn the player character in the center of the arena with initial stats (100 HP, base movement speed)"
 
 ## Important
-- Implement ONLY this specific feature (ID: arena-room-creation)
+- Implement ONLY this specific feature (ID: player-character-spawn)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
