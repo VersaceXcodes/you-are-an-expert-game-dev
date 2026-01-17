@@ -31,6 +31,7 @@ export interface Player extends Entity {
   dashVx: number;
   dashVy: number;
   isInvulnerable: boolean;
+  invulnerabilityTimer: number;
   aimAngle: number;
   // Weapon stats
   damage: number;

@@ -69,6 +69,7 @@ export class GameLogic {
       dashVx: 0,
       dashVy: 0,
       isInvulnerable: false,
+      invulnerabilityTimer: 0,
       markedForDeletion: false,
       aimAngle: 0,
       damage: 10,
@@ -213,6 +214,9 @@ export class GameLogic {
     if (this.player.dashCooldown > 0) {
       this.player.dashCooldown -= dt;
     }
+    if (this.player.invulnerabilityTimer > 0) {
+      this.player.invulnerabilityTimer -= dt;
+    }
 
     let nextX = this.player.x;
     let nextY = this.player.y;
@@ -292,6 +296,13 @@ export class GameLogic {
 
     // Update Enemies
     for (const enemy of this.enemies) {
+      // Check collision with player (Body Contact Damage)
+      if (this.checkCollision(enemy, this.player) && !this.player.isInvulnerable && this.player.invulnerabilityTimer <= 0) {
+        this.player.hp -= enemy.damage;
+        this.player.invulnerabilityTimer = 1.0;
+        if (this.player.hp < 0) this.player.hp = 0;
+      }
+
       // Calculate vector to player
       const dx = this.player.x - enemy.x;
       const dy = this.player.y - enemy.y;
@@ -402,8 +413,9 @@ export class GameLogic {
       if (!b.markedForDeletion) {
         if (b.isEnemy) {
           // Enemy bullet vs Player
-          if (this.player && !this.player.isInvulnerable && this.checkCollision(b, this.player)) {
+          if (this.player && !this.player.isInvulnerable && this.player.invulnerabilityTimer <= 0 && this.checkCollision(b, this.player)) {
             this.player.hp -= b.damage;
+            this.player.invulnerabilityTimer = 1.0;
             b.markedForDeletion = true;
             if (this.player.hp <= 0) {
               this.player.hp = 0;
@@ -553,7 +565,15 @@ export class GameLogic {
       ctx.rotate(this.player.aimAngle);
       
       // Player body (square)
-      ctx.fillStyle = this.player.color;
+      if (this.player.invulnerabilityTimer > 0) {
+        if (Math.floor(this.player.invulnerabilityTimer * 10) % 2 === 0) {
+          ctx.fillStyle = '#ffffff';
+        } else {
+          ctx.fillStyle = this.player.color;
+        }
+      } else {
+        ctx.fillStyle = this.player.color;
+      }
       ctx.fillRect(-this.player.width / 2, -this.player.height / 2, this.player.width, this.player.height);
       
       // Gun/Pointer

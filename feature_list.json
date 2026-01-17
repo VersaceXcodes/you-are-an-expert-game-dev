@@ -273,9 +273,10 @@
     "passes": true,
     "selected": true,
     "order": 16,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T18:38:37.317Z",
-    "attempts": 1
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T18:43:19.370Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T18:43:19.370Z"
   },
   {
     "id": "enemy-spawn-telegraph",
@@ -318,9 +319,12 @@
       "Check that damage is applied only once per contact"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 19
+    "order": 19,
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T18:43:29.227Z",
+    "attempts": 1
   },
   {
     "id": "player-damage-to-enemies",
