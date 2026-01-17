@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: mouse-aiming
-- **Title**: Allow player to aim their weapon using mouse cursor position relative to player character
+- **ID**: basic-shooting
+- **Title**: Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread
 - **Category**: functional
 
 ## Description
-Allow player to aim their weapon using mouse cursor position relative to player character
+Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Allow player to aim their weapon using mouse cursor position relative to player 
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Move mouse around the screen
-2. Verify player character or weapon visually indicates aim direction
-3. Confirm aiming works smoothly in all directions
-4. Test that aiming updates in real-time with mouse movement
+1. Left click and verify bullet fires toward mouse cursor
+2. Hold left click and confirm sustained fire at proper rate
+3. Observe slight bullet spread for multiple shots
+4. Check that bullets travel across the arena properly
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Allow player to aim their weapon using mouse cursor position relative to player 
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Allow player to aim their weapon using mouse cursor position relative to player character"
+6. **Commit**: Use message "feat(functional): Enable player to shoot bullets with left mouse click at 3 shots per second with 10 damage and slight spread"
 
 ## Important
-- Implement ONLY this specific feature (ID: mouse-aiming)
+- Implement ONLY this specific feature (ID: basic-shooting)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
