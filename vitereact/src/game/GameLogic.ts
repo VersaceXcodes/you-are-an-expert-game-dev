@@ -35,6 +35,7 @@ import {
   WAVE_INTERVAL
 } from './constants';
 import { InputManager } from './InputManager';
+import { UPGRADES } from './upgrades';
 
 export class GameLogic {
   player: Player | null = null;
@@ -87,6 +88,18 @@ export class GameLogic {
     this.waveTimer = 0;
     
     this.spawnWave();
+  }
+
+  applyUpgrade(upgradeId: string) {
+    if (!this.player) return;
+    const upgrade = UPGRADES.find(u => u.id === upgradeId);
+    if (upgrade) {
+      upgrade.apply(this.player);
+    }
+    
+    this.currentWave++;
+    this.spawnWave();
+    this.state = 'RUN';
   }
 
   spawnWave() {
@@ -288,8 +301,7 @@ export class GameLogic {
     if (this.enemies.length === 0) {
       this.waveTimer += dt;
       if (this.waveTimer >= 2) { // 2 seconds delay between waves
-        this.currentWave++;
-        this.spawnWave();
+        this.state = 'UPGRADE';
         this.waveTimer = 0;
       }
     }

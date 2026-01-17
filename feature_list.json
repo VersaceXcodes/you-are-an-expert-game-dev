@@ -376,8 +376,9 @@
     "selected": true,
     "order": 22,
     "status": "completed",
-    "lastAttemptAt": "2026-01-17T18:54:19.125Z",
-    "attempts": 1
+    "lastAttemptAt": "2026-01-17T19:00:18.346Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T19:00:18.346Z"
   },
   {
     "id": "wave-banners",
@@ -420,9 +421,13 @@
       "Check that upgrades are randomly selected each time"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 25
+    "order": 25,
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T19:00:26.304Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T19:15:00.000Z"
   },
   {
     "id": "upgrade-selection-interaction",
@@ -435,7 +440,7 @@
       "Check that next wave begins after selection"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
     "order": 26
   },

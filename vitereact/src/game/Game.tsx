@@ -6,6 +6,7 @@ import { InputManager } from './InputManager';
 import MainMenu from './ui/MainMenu';
 import MetaMenu from './ui/MetaMenu';
 import SettingsMenu from './ui/SettingsMenu';
+import UpgradeMenu from './ui/UpgradeMenu';
 import HUD from './ui/HUD';
 
 const Game: React.FC = () => {
@@ -155,6 +156,12 @@ const Game: React.FC = () => {
             maxDashCooldown={PLAYER_DASH_COOLDOWN}
             wave={wave}
           />
+        )}
+
+        {gameState === 'UPGRADE' && (
+          <UpgradeMenu onSelect={(upgrade) => {
+            gameLogicRef.current?.applyUpgrade(upgrade.id);
+          }} />
         )}
 
         {gameState === 'META_MENU' && (
