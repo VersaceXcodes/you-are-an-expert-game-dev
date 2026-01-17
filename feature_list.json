@@ -202,9 +202,10 @@
     "passes": true,
     "selected": true,
     "order": 12,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T17:04:42.429Z",
-    "attempts": 1
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T17:11:42.987Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T17:11:42.987Z"
   },
   {
     "id": "dash-visual-feedback",
@@ -234,7 +235,10 @@
     "priority": 1,
     "passes": false,
     "selected": true,
-    "order": 14
+    "order": 14,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T17:11:53.132Z",
+    "attempts": 1
   },
   {
     "id": "enemy-shooter-spawn",
@@ -247,9 +251,12 @@
       "Confirm Shooter bullets travel at appropriate speed"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 15
+    "order": 15,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T18:25:47.408Z",
+    "attempts": 1
   },
   {
     "id": "enemy-tank-spawn",

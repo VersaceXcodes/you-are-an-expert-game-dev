@@ -11,6 +11,7 @@ describe('GameLogic - Collision', () => {
   beforeEach(() => {
     game = new GameLogic();
     game.reset();
+    game.enemies = []; // Clear auto-spawned enemies for isolation
     game.state = 'RUN';
     
     mockInput = {
@@ -39,7 +40,8 @@ describe('GameLogic - Collision', () => {
       vx: 100,
       vy: 0,
       damage: 10,
-      markedForDeletion: false
+      markedForDeletion: false,
+      isEnemy: false
     });
 
     // Update to move bullet past wall
@@ -74,7 +76,8 @@ describe('GameLogic - Collision', () => {
       vx: 100, // Moving right
       vy: 0,
       damage: 10,
-      markedForDeletion: false
+      markedForDeletion: false,
+      isEnemy: false
     });
 
     // Update to hit obstacle
@@ -98,11 +101,11 @@ describe('GameLogic - Collision', () => {
       color: '#ff0000',
       hp: 100,
       maxHp: 100,
-      speed: 100,
+      speed: 0, // Stationary for collision test
       vx: 0,
       vy: 0,
       damage: 10,
-      type: 'CHASER',
+      type: 'CHASER' as const,
       markedForDeletion: false
     };
     // @ts-ignore - explicitly testing enemy collision
@@ -119,7 +122,8 @@ describe('GameLogic - Collision', () => {
       vx: 100,
       vy: 0,
       damage: 10,
-      markedForDeletion: false
+      markedForDeletion: false,
+      isEnemy: false
     });
 
     // Update to hit enemy
@@ -144,11 +148,11 @@ describe('GameLogic - Collision', () => {
       color: '#ff0000',
       hp: 10,
       maxHp: 100,
-      speed: 100,
+      speed: 0, // Stationary
       vx: 0,
       vy: 0,
       damage: 10,
-      type: 'CHASER',
+      type: 'CHASER' as const,
       markedForDeletion: false
     };
     // @ts-ignore
@@ -165,7 +169,8 @@ describe('GameLogic - Collision', () => {
       vx: 100,
       vy: 0,
       damage: 10,
-      markedForDeletion: false
+      markedForDeletion: false,
+      isEnemy: false
     });
 
     game.update(0.6, mockInput, 0, 0);

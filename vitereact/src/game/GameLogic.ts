@@ -11,7 +11,23 @@ import {
   PLAYER_MAX_HP,
   PLAYER_DASH_SPEED,
   PLAYER_DASH_DURATION,
-  PLAYER_DASH_COOLDOWN
+  PLAYER_DASH_COOLDOWN,
+  ENEMY_CHASER_HP,
+  ENEMY_CHASER_SPEED,
+  ENEMY_CHASER_DAMAGE,
+  ENEMY_CHASER_SIZE,
+  ENEMY_CHASER_COLOR,
+  ENEMY_SHOOTER_HP,
+  ENEMY_SHOOTER_SPEED,
+  ENEMY_SHOOTER_DAMAGE,
+  ENEMY_SHOOTER_SIZE,
+  ENEMY_SHOOTER_COLOR,
+  ENEMY_SHOOTER_RANGE,
+  ENEMY_SHOOTER_FIRE_RATE,
+  ENEMY_SHOOTER_BULLET_SPEED,
+  ENEMY_SHOOTER_BULLET_SIZE,
+  ENEMY_SHOOTER_BULLET_COLOR,
+  WAVE_INTERVAL
 } from './constants';
 import { InputManager } from './InputManager';
 
@@ -21,6 +37,10 @@ export class GameLogic {
   obstacles: Entity[] = [];
   bullets: Bullet[] = [];
   enemies: Enemy[] = [];
+  
+  // Wave Management
+  currentWave: number = 0;
+  waveTimer: number = 0;
   
   constructor() {
     this.reset();
@@ -55,9 +75,90 @@ export class GameLogic {
 
     this.bullets = [];
     this.enemies = [];
-
-    // Obstacles will be added in a later feature
     this.obstacles = [];
+    
+    this.currentWave = 1;
+    this.waveTimer = 0;
+    
+    this.spawnWave();
+  }
+
+  spawnWave() {
+    const waveSize = 2 + Math.floor(this.currentWave * 1.5);
+    
+    for (let i = 0; i < waveSize; i++) {
+      // Determine enemy type based on wave
+      // Wave 1: All Chasers
+      // Wave 2+: Mix of Chasers and Shooters
+      let type: 'CHASER' | 'SHOOTER' = 'CHASER';
+      if (this.currentWave >= 2) {
+        type = Math.random() > 0.5 ? 'SHOOTER' : 'CHASER';
+      }
+
+      // Random position around the edges of the arena (but inside)
+      let x, y;
+      const edge = Math.floor(Math.random() * 4);
+      const padding = 50;
+      
+      switch(edge) {
+        case 0: // Top
+          x = ARENA_X + Math.random() * ARENA_WIDTH;
+          y = ARENA_Y + padding;
+          break;
+        case 1: // Right
+          x = ARENA_X + ARENA_WIDTH - padding;
+          y = ARENA_Y + Math.random() * ARENA_HEIGHT;
+          break;
+        case 2: // Bottom
+          x = ARENA_X + Math.random() * ARENA_WIDTH;
+          y = ARENA_Y + ARENA_HEIGHT - padding;
+          break;
+        default: // Left
+          x = ARENA_X + padding;
+          y = ARENA_Y + Math.random() * ARENA_HEIGHT;
+          break;
+      }
+
+      if (type === 'CHASER') {
+        this.enemies.push({
+          id: `enemy_${Date.now()}_${i}`,
+          x,
+          y,
+          width: ENEMY_CHASER_SIZE,
+          height: ENEMY_CHASER_SIZE,
+          color: ENEMY_CHASER_COLOR,
+          hp: ENEMY_CHASER_HP,
+          maxHp: ENEMY_CHASER_HP,
+          speed: ENEMY_CHASER_SPEED,
+          vx: 0,
+          vy: 0,
+          damage: ENEMY_CHASER_DAMAGE,
+          type: 'CHASER',
+          markedForDeletion: false
+        });
+      } else {
+        this.enemies.push({
+          id: `enemy_${Date.now()}_${i}`,
+          x,
+          y,
+          width: ENEMY_SHOOTER_SIZE,
+          height: ENEMY_SHOOTER_SIZE,
+          color: ENEMY_SHOOTER_COLOR,
+          hp: ENEMY_SHOOTER_HP,
+          maxHp: ENEMY_SHOOTER_HP,
+          speed: ENEMY_SHOOTER_SPEED,
+          vx: 0,
+          vy: 0,
+          damage: ENEMY_SHOOTER_DAMAGE,
+          type: 'SHOOTER',
+          markedForDeletion: false,
+          attackRange: ENEMY_SHOOTER_RANGE,
+          fireRate: ENEMY_SHOOTER_FIRE_RATE,
+          lastFired: 0,
+          bulletSpeed: ENEMY_SHOOTER_BULLET_SPEED
+        });
+      }
+    }
   }
 
   clampToArena(entity: Entity, nextX: number, nextY: number): { x: number, y: number } {
@@ -150,9 +251,60 @@ export class GameLogic {
     this.player.x = finalX;
     this.player.y = finalY;
 
+    // Wave Logic
+    if (this.enemies.length === 0) {
+      this.waveTimer += dt;
+      if (this.waveTimer >= 2) { // 2 seconds delay between waves
+        this.currentWave++;
+        this.spawnWave();
+        this.waveTimer = 0;
+      }
+    }
+
     // Update Enemies
     for (const enemy of this.enemies) {
-      // Placeholder movement logic (enemies don't move yet but need to be constrained)
+      // Calculate vector to player
+      const dx = this.player.x - enemy.x;
+      const dy = this.player.y - enemy.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      let moveX = 0;
+      let moveY = 0;
+
+      if (enemy.type === 'CHASER') {
+        if (dist > 0) {
+          moveX = (dx / dist) * enemy.speed;
+          moveY = (dy / dist) * enemy.speed;
+        }
+      } else if (enemy.type === 'SHOOTER') {
+        // Keep distance logic
+        const range = enemy.attackRange || ENEMY_SHOOTER_RANGE;
+        
+        // If too far, approach
+        if (dist > range + 50) {
+           moveX = (dx / dist) * enemy.speed;
+           moveY = (dy / dist) * enemy.speed;
+        } 
+        // If too close, retreat
+        else if (dist < range - 50) {
+           moveX = -(dx / dist) * enemy.speed;
+           moveY = -(dy / dist) * enemy.speed;
+        }
+        // Otherwise stop/strafe (stationary for now)
+        
+        // Shooting Logic
+        if (enemy.lastFired !== undefined && enemy.fireRate) {
+          enemy.lastFired += dt;
+          if (enemy.lastFired >= 1 / enemy.fireRate) {
+            this.fireEnemyBullet(enemy);
+            enemy.lastFired = 0;
+          }
+        }
+      }
+
+      enemy.vx = moveX;
+      enemy.vy = moveY;
+
       const enemyNextX = enemy.x + enemy.vx * dt;
       const enemyNextY = enemy.y + enemy.vy * dt;
 
@@ -167,6 +319,20 @@ export class GameLogic {
         }
         if (this.checkCollision({ ...enemy, x: eFinalX, y: eFinalY }, obs)) {
           eFinalY = enemy.y;
+        }
+      }
+
+      // Simple separation logic to prevent stacking
+      for (const other of this.enemies) {
+        if (enemy === other) continue;
+        if (this.checkCollision(enemy, other)) {
+            const pushX = enemy.x - other.x;
+            const pushY = enemy.y - other.y;
+            const len = Math.sqrt(pushX * pushX + pushY * pushY);
+            if (len > 0) {
+              eFinalX += (pushX / len) * 1;
+              eFinalY += (pushY / len) * 1;
+            }
         }
       }
 
@@ -203,16 +369,30 @@ export class GameLogic {
         }
       }
 
-      // Feature 11: Enemy collision
+      // Collision handling
       if (!b.markedForDeletion) {
-        for (const enemy of this.enemies) {
-          if (this.checkCollision(b, enemy)) {
-            enemy.hp -= b.damage;
+        if (b.isEnemy) {
+          // Enemy bullet vs Player
+          if (this.player && !this.player.isInvulnerable && this.checkCollision(b, this.player)) {
+            this.player.hp -= b.damage;
             b.markedForDeletion = true;
-            if (enemy.hp <= 0) {
-              enemy.markedForDeletion = true;
+            if (this.player.hp <= 0) {
+              this.player.hp = 0;
             }
-            break;
+          }
+        } else {
+          // Player bullet vs Enemies
+          // console.log('Checking collision for bullet', b.id, 'vs', this.enemies.length, 'enemies');
+          for (const enemy of this.enemies) {
+            if (this.checkCollision(b, enemy)) {
+              // console.log('Collision detected!');
+              enemy.hp -= b.damage;
+              b.markedForDeletion = true;
+              if (enemy.hp <= 0) {
+                enemy.markedForDeletion = true;
+              }
+              break;
+            }
           }
         }
       }
@@ -248,7 +428,35 @@ export class GameLogic {
       vx,
       vy,
       damage: this.player.damage,
-      markedForDeletion: false
+      markedForDeletion: false,
+      isEnemy: false
+    });
+  }
+
+  fireEnemyBullet(enemy: Enemy) {
+    if (!this.player) return;
+    
+    const dx = this.player.x - enemy.x;
+    const dy = this.player.y - enemy.y;
+    const angle = Math.atan2(dy, dx);
+    
+    const speed = enemy.bulletSpeed || ENEMY_SHOOTER_BULLET_SPEED;
+    
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+
+    this.bullets.push({
+      id: Math.random().toString(),
+      x: enemy.x,
+      y: enemy.y,
+      width: ENEMY_SHOOTER_BULLET_SIZE,
+      height: ENEMY_SHOOTER_BULLET_SIZE,
+      color: ENEMY_SHOOTER_BULLET_COLOR,
+      vx,
+      vy,
+      damage: enemy.damage,
+      markedForDeletion: false,
+      isEnemy: true
     });
   }
 
@@ -292,6 +500,13 @@ export class GameLogic {
     for (const enemy of this.enemies) {
       ctx.fillStyle = enemy.color;
       ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
+      
+      // Draw health bar for enemies
+      const hpPercent = enemy.hp / enemy.maxHp;
+      ctx.fillStyle = 'red';
+      ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2 - 10, enemy.width, 4);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2 - 10, enemy.width * hpPercent, 4);
     }
 
     // Feature 8/9: Draw Bullets
@@ -320,4 +535,3 @@ export class GameLogic {
     }
   }
 }
-

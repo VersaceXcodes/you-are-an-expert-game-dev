@@ -44,6 +44,7 @@ export interface Bullet extends Entity {
   vx: number;
   vy: number;
   damage: number;
+  isEnemy: boolean;
 }
 
 export interface Enemy extends Entity {
@@ -54,4 +55,9 @@ export interface Enemy extends Entity {
   vy: number;
   damage: number;
   type: 'CHASER' | 'SHOOTER' | 'TANK';
+  // Shooter specific
+  attackRange?: number;
+  fireRate?: number;
+  lastFired?: number;
+  bulletSpeed?: number;
 }
