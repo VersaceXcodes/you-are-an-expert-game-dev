@@ -1,5 +1,15 @@
 import { Player, GameState, Entity, Bullet, Enemy } from './types';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, WALL_THICKNESS, ARENA_X, ARENA_Y, ARENA_WIDTH, ARENA_HEIGHT } from './constants';
+import { 
+  CANVAS_WIDTH, 
+  CANVAS_HEIGHT, 
+  WALL_THICKNESS, 
+  ARENA_X, 
+  ARENA_Y, 
+  ARENA_WIDTH, 
+  ARENA_HEIGHT,
+  PLAYER_BASE_SPEED,
+  PLAYER_MAX_HP
+} from './constants';
 import { InputManager } from './InputManager';
 
 export class GameLogic {
@@ -21,9 +31,9 @@ export class GameLogic {
       width: 32,
       height: 32,
       color: '#00ff00',
-      hp: 100,
-      maxHp: 100,
-      speed: 300,
+      hp: PLAYER_MAX_HP,
+      maxHp: PLAYER_MAX_HP,
+      speed: PLAYER_BASE_SPEED,
       vx: 0,
       vy: 0,
       dashCooldown: 0,

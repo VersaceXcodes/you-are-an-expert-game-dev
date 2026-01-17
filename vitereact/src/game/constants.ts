@@ -8,3 +8,6 @@ export const ARENA_X = WALL_THICKNESS;
 export const ARENA_Y = WALL_THICKNESS;
 export const ARENA_WIDTH = CANVAS_WIDTH - (WALL_THICKNESS * 2);
 export const ARENA_HEIGHT = CANVAS_HEIGHT - (WALL_THICKNESS * 2);
+
+export const PLAYER_BASE_SPEED = 300;
+export const PLAYER_MAX_HP = 100;

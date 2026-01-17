@@ -58,10 +58,11 @@
     "passes": true,
     "selected": true,
     "order": 4,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T16:26:27.286Z",
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T16:32:25.074Z",
     "attempts": 2,
-    "errorMessage": "Agent completed but feature not marked as passed"
+    "errorMessage": "Agent completed but feature not marked as passed",
+    "completedAt": "2026-01-17T16:32:25.074Z"
   },
   {
     "id": "arena-obstacles",
@@ -89,9 +90,12 @@
       "Confirm player is ready to receive input commands"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 6
+    "order": 6,
+    "status": "in_progress",
+    "lastAttemptAt": "2026-01-17T16:32:34.285Z",
+    "attempts": 1
   },
   {
     "id": "player-movement-wasd",

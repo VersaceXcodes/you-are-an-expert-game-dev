@@ -6,14 +6,21 @@ import { InputManager } from './InputManager';
 import MainMenu from './ui/MainMenu';
 import MetaMenu from './ui/MetaMenu';
 import SettingsMenu from './ui/SettingsMenu';
+import HUD from './ui/HUD';
 
 const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<GameState>('MENU');
+  const [playerHp, setPlayerHp] = useState(100);
+  const [playerMaxHp, setPlayerMaxHp] = useState(100);
   
   // Use refs to keep persistent game objects
   const gameLogicRef = useRef<GameLogic | null>(null);
   const inputManagerRef = useRef<InputManager | null>(null);
+  
+  // Refs to track last synced values to avoid excessive re-renders
+  const lastHpRef = useRef(100);
+  const lastMaxHpRef = useRef(100);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -57,6 +64,19 @@ const Game: React.FC = () => {
       // Sync state back to React if changed
       if (game.state !== gameState) {
         setGameState(game.state);
+      }
+
+      // Sync player stats for UI
+      if (game.player) {
+        const currentHp = Math.ceil(game.player.hp);
+        const currentMaxHp = game.player.maxHp;
+        
+        if (currentHp !== lastHpRef.current || currentMaxHp !== lastMaxHpRef.current) {
+          setPlayerHp(currentHp);
+          setPlayerMaxHp(currentMaxHp);
+          lastHpRef.current = currentHp;
+          lastMaxHpRef.current = currentMaxHp;
+        }
       }
 
       animationFrameId = requestAnimationFrame(loop);
@@ -108,6 +128,10 @@ const Game: React.FC = () => {
             onSettings={() => setGameState('SETTINGS')}
             onQuit={handleQuit}
           />
+        )}
+
+        {gameState === 'RUN' && (
+          <HUD hp={playerHp} maxHp={playerMaxHp} />
         )}
 
         {gameState === 'META_MENU' && (
