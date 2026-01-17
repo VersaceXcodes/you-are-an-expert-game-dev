@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: bullet-collision
-- **Title**: Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact
+- **ID**: dash-ability
+- **Title**: Implement dash ability with Space key providing 0
 - **Category**: functional
 
 ## Description
-Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact
+Implement dash ability with Space key providing 0.25s invulnerability and 2.5s cooldown
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Implement bullet collision with walls, obstacles, and enemies, destroying bullet
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Shoot bullets at arena walls and verify they disappear
-2. Fire at pillar obstacles and confirm bullets are stopped
-3. Shoot at enemies and check bullets hit and disappear
-4. Verify bullets don't pass through solid objects
+1. Press Space and verify player dashes in movement direction
+2. Confirm player is invulnerable during dash duration
+3. Check that dash has 2.5 second cooldown before reuse
+4. Test that dash doesn't work while on cooldown
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Implement bullet collision with walls, obstacles, and enemies, destroying bullet
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Implement bullet collision with walls, obstacles, and enemies, destroying bullets on impact"
+6. **Commit**: Use message "feat(functional): Implement dash ability with Space key providing 0"
 
 ## Important
-- Implement ONLY this specific feature (ID: bullet-collision)
+- Implement ONLY this specific feature (ID: dash-ability)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
