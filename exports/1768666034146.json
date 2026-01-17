@@ -1,0 +1,15 @@
+{
+  "timestamp": 1768666034146,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "you-are-an-expert-game-dev",
+  "files": [
+    {
+      "path": "/mnt/data/you-are-an-expert-game-dev/backend/.env",
+      "type": "text",
+      "size": 333,
+      "dependencies": false
+    }
+  ]
+}
