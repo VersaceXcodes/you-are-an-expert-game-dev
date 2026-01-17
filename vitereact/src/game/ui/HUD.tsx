@@ -5,14 +5,20 @@ interface HUDProps {
   maxHp: number;
   dashCooldown: number;
   maxDashCooldown: number;
+  wave: number;
 }
 
-const HUD: React.FC<HUDProps> = ({ hp, maxHp, dashCooldown, maxDashCooldown }) => {
+const HUD: React.FC<HUDProps> = ({ hp, maxHp, dashCooldown, maxDashCooldown, wave }) => {
   const hpPercentage = Math.max(0, Math.min(100, (hp / maxHp) * 100));
   const dashPercentage = Math.max(0, Math.min(100, (1 - (dashCooldown / maxDashCooldown)) * 100));
 
   return (
     <div className="absolute top-4 left-4 w-64 p-3 bg-slate-900/80 rounded-lg border border-slate-700 shadow-lg pointer-events-none select-none">
+      <div className="flex justify-between mb-2 text-slate-100 text-lg font-bold tracking-wider border-b border-slate-700 pb-1">
+        <span>WAVE</span>
+        <span className="text-yellow-400">{wave}</span>
+      </div>
+
       <div className="flex justify-between mb-1 text-slate-100 text-sm font-bold tracking-wider">
         <span>HP</span>
         <span>{Math.ceil(hp)}/{maxHp}</span>

@@ -14,6 +14,7 @@ const Game: React.FC = () => {
   const [playerHp, setPlayerHp] = useState(100);
   const [playerMaxHp, setPlayerMaxHp] = useState(100);
   const [dashCooldown, setDashCooldown] = useState(0);
+  const [wave, setWave] = useState(1);
   
   // Use refs to keep persistent game objects
   const gameLogicRef = useRef<GameLogic | null>(null);
@@ -69,6 +70,10 @@ const Game: React.FC = () => {
       // Sync state back to React if changed
       if (game.state !== gameState) {
         setGameState(game.state);
+      }
+      
+      if (game.currentWave !== wave) {
+        setWave(game.currentWave);
       }
 
       // Sync player stats for UI
@@ -148,6 +153,7 @@ const Game: React.FC = () => {
             maxHp={playerMaxHp} 
             dashCooldown={dashCooldown}
             maxDashCooldown={PLAYER_DASH_COOLDOWN}
+            wave={wave}
           />
         )}
 
