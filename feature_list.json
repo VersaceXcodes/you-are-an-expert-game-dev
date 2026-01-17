@@ -145,9 +145,10 @@
     "passes": true,
     "selected": true,
     "order": 9,
-    "status": "in_progress",
-    "lastAttemptAt": "2026-01-17T16:43:39.305Z",
-    "attempts": 1
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T16:51:31.574Z",
+    "attempts": 1,
+    "completedAt": "2026-01-17T16:51:31.574Z"
   },
   {
     "id": "basic-shooting",
@@ -160,9 +161,12 @@
       "Check that bullets travel across the arena properly"
     ],
     "priority": 1,
-    "passes": false,
+    "passes": true,
     "selected": true,
-    "order": 10
+    "order": 10,
+    "status": "completed",
+    "lastAttemptAt": "2026-01-17T16:56:00.000Z",
+    "attempts": 2
   },
   {
     "id": "bullet-collision",
