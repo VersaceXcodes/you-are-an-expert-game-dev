@@ -1,12 +1,12 @@
 # Feature Implementation
 
 ## Feature Details
-- **ID**: enemy-shooter-spawn
-- **Title**: Spawn Shooter enemies that maintain distance and fire slow bullets at the player
+- **ID**: enemy-tank-spawn
+- **Title**: Spawn Tank enemies that move slowly but have high HP and deal significant damage
 - **Category**: functional
 
 ## Description
-Spawn Shooter enemies that maintain distance and fire slow bullets at the player
+Spawn Tank enemies that move slowly but have high HP and deal significant damage
 
 ## Project Context
 - **Platform**: Vite React (Web)
@@ -18,10 +18,10 @@ Spawn Shooter enemies that maintain distance and fire slow bullets at the player
 - Keep changes within the existing Vite boilerplate
 
 ## Verification Steps
-1. Reach waves where Shooters appear
-2. Observe Shooters keeping distance from player
-3. Verify Shooters fire bullets toward player position
-4. Confirm Shooter bullets travel at appropriate speed
+1. Progress to waves with Tank enemies
+2. Verify Tanks move slower than other enemy types
+3. Confirm Tanks require many hits to defeat
+4. Check that Tank contact damage is higher than other enemies
 
 ## Instructions
 1. **Explore**: Review the existing codebase structure and patterns
@@ -32,10 +32,10 @@ Spawn Shooter enemies that maintain distance and fire slow bullets at the player
    - Backend Last: Implement API/database changes and wire the UI to real data
 4. **Test**: Verify the feature works as expected
 5. **Update**: Mark feature as "passes": true in feature_list.json
-6. **Commit**: Use message "feat(functional): Spawn Shooter enemies that maintain distance and fire slow bullets at the player"
+6. **Commit**: Use message "feat(functional): Spawn Tank enemies that move slowly but have high HP and deal significant damage"
 
 ## Important
-- Implement ONLY this specific feature (ID: enemy-shooter-spawn)
+- Implement ONLY this specific feature (ID: enemy-tank-spawn)
 - Do NOT modify features already marked as passes: true
 - Follow existing code patterns and conventions
 - Maintain backward compatibility
